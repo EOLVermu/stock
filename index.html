@@ -54,6 +54,11 @@ button{cursor:pointer}
 .menu button span{font-size:14px;opacity:.8;text-align:right}
 .menu button.prin{background:var(--beige);color:var(--negro);border-color:var(--beige)}
 .portada .salir{align-self:center;background:none;border:0;color:var(--beige);opacity:.7;text-decoration:underline;font-size:15px;padding:6px}
+/* Pantalla de inicio: logo arriba, botones justo debajo y "Salir" al fondo */
+.portada.inicio{justify-content:flex-start;background-image:none}
+.portada.inicio .logo-top{flex:none;width:min(62vw, 32vh, 340px);aspect-ratio:1;margin:max(8px, env(safe-area-inset-top,0px)) auto 0;background:var(--logo, none) center / contain no-repeat}
+.portada.inicio .wrap{flex:1;background:none;padding-top:4px}
+.portada.inicio .salir{margin-top:auto}
 .nombres{display:flex;flex-wrap:wrap;gap:8px}
 .nombres button{border:1px solid rgba(214,188,168,.5);background:rgba(43,37,38,.75);color:var(--beige);border-radius:999px;padding:10px 18px;font-size:18px;font-weight:600}
 .nombres button[aria-pressed="true"]{background:var(--beige);color:var(--negro)}
@@ -466,7 +471,7 @@ function vistaInicio(app){
   const cajaHoy = (S.datos.caja || []).find(c => c.fecha === ymd(new Date()));
   const h = new Date().getHours();
   const saludo = h < 14 ? 'Buenos días' : h < 21 ? 'Buenas tardes' : 'Buenas noches';
-  app.innerHTML = `<section class="portada ${esAdmin() ? 'completa' : ''}"><div class="wrap">
+  app.innerHTML = `<section class="portada inicio"><div class="logo-top" role="img" aria-label="El Otro Lado · Gastro Vermutería"></div><div class="wrap">
     <p class="saludo">${saludo}, ${esc(S.usuario.nombre)}<small>${esAdmin() ? 'Administrador' : 'Almacén'}</small></p>
     <nav class="menu" aria-label="Secciones">
       <button type="button" class="prin" data-ir="almacen"><b>ALMACÉN</b><span>${pend ? pend + ' sin guardar' : sinContar ? sinContar + ' sin contar esta semana' : 'Todo contado'}</span></button>
