@@ -278,7 +278,7 @@ const SECCIONES = {
 
 /* ===================== Estado ===================== */
 const S = {
-  pantalla: 'cargando', cred: null, usuario: null, datos: null,
+  pantalla: 'cargando', cred: null, usuario: null, datos: null, nombres: [],
   login: { nombre: '', pin: '', error: '' },
   borrador: {}, cantidades: {}, extra: {}, abierto: null, recep: null, recepConfirmar: false,
   caja: { mes: null, sel: null },
@@ -323,6 +323,10 @@ async function arrancar(){ await irAEntrar(); }
 const claveBorrador = () => 'eol_borrador_' + sinAcentos(S.usuario ? S.usuario.nombre : '');
 async function irAEntrar(msg){
   S.pantalla = 'entrar'; S.login = { nombre: '', pin: '', error: msg || '' };
+  if (!S.nombres.length){
+    render();
+    try { S.nombres = await llamar('usuariosPublicos'); } catch(e){ S.nombres = []; S.login.error = 'No se pudo conectar. Revisa la conexión.'; }
+  }
   render();
 }
 function salir(msg){
@@ -416,37 +420,27 @@ function vistaEntrar(app){
   const n = L.pin.length;
   app.innerHTML = `<section class="portada"><div class="wrap">
     ${!L.nombre ? `
-      <p class="saludo">¿Quién eres?<small>Escribe tu nombre</small></p>
-      <form class="entrar-nombre" id="fNombre">
-        <input id="l_nombre" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Tu nombre" aria-label="Tu nombre" required>
-        <button class="btn" type="submit">Siguiente</button>
-      </form>
+      <p class="saludo">¿Quién eres?<small>Elige tu nombre</small></p>
+      <div class="nombres">${S.nombres.map(x => `<button type="button" data-nombre="${esc(x.nombre)}" data-largo="${x.largo}">${esc(x.nombre)}</button>`).join('') || (L.error ? '' : '<p class="muted">Cargando…</p>')}</div>
       <p class="error" role="alert">${esc(L.error)}</p>`
     : `
       <p class="saludo">Hola, ${esc(L.nombre)}<small>Escribe tu PIN</small></p>
-      <div class="puntos ${L.error ? 'agita' : ''}" aria-label="${n} números escritos">${Array.from({length: Math.max(4, n)}, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</div>
+      <div class="puntos ${L.error ? 'agita' : ''}" aria-label="${n} números escritos">${Array.from({length: L.largo || 4}, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</div>
       <p class="error" role="alert">${esc(L.error)}</p>
       <div class="teclado">${[1,2,3,4,5,6,7,8,9].map(d => `<button type="button" data-tecla="${d}">${d}</button>`).join('')}
         <button type="button" data-tecla="otro" style="font-size:15px">Cambiar</button><button type="button" data-tecla="0">0</button><button type="button" data-tecla="borrar" aria-label="Borrar">⌫</button></div>
-      <button type="button" class="btn entrar-ok" data-tecla="ok" ${n < 4 || L.enviando ? 'disabled' : ''}>${L.enviando ? 'Entrando…' : 'Entrar'}</button>`}
+      ${L.enviando ? '<p class="muted" style="text-align:center;margin-top:12px">Entrando…</p>' : ''}`}
   </div></section>`;
-  const f = document.getElementById('fNombre');
-  if (f){
-    const inp = document.getElementById('l_nombre'); inp.focus();
-    f.onsubmit = ev => { ev.preventDefault(); const v = inp.value.trim(); if (!v) return; L.nombre = v; L.pin = ''; L.error = ''; render(); };
-  }
 }
 async function tecla(t){
   const L = S.login;
   if (L.enviando) return;
   if (t === 'otro'){ L.nombre = ''; L.pin = ''; L.error = ''; return render(); }
   if (t === 'borrar'){ L.pin = L.pin.slice(0, -1); L.error = ''; return render(); }
-  if (t !== 'ok'){
-    if (L.pin.length >= PIN_MAX) return;
-    L.pin += t; L.error = ''; render();
-    if (L.pin.length < PIN_MAX) return;   // con 6 cifras entra solo; con 4 hay que pulsar Entrar
-  }
-  if (L.pin.length < 4) return;
+  const largo = L.largo || 4;               // 6 cifras los administradores, 4 el resto
+  if (L.pin.length >= largo) return;
+  L.pin += t; L.error = ''; render();
+  if (L.pin.length < largo) return;         // al completar el PIN entra solo
   const cred = { nombre: L.nombre, pin: L.pin };
   L.enviando = true; render();
   try {
@@ -981,6 +975,7 @@ function tocarBorrador(id, campo, valor){
 document.addEventListener('click', async e => {
   const t = e.target.closest('button, a');
   if (!t) { if (e.target.classList.contains('velo')) cerrarHoja(); return; }
+  if (t.dataset.nombre){ S.login.nombre = t.dataset.nombre; S.login.largo = Number(t.dataset.largo) || 4; S.login.pin = ''; S.login.error = ''; render(); return; }
   if (t.dataset.tecla){ tecla(t.dataset.tecla); return; }
   if (t.dataset.ir){ ir(t.dataset.ir); return; }
   if (t.dataset.recep){ S.recep = { num: t.dataset.recep, ahora: {} }; S.recepConfirmar = false; window.scrollTo(0, 0); render(); return; }
