@@ -6,6 +6,13 @@
 <meta name="theme-color" content="#231E1F">
 <meta name="robots" content="noindex">
 <title>El Otro Lado · Stock</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="iconos/favicon.png">
+<link rel="apple-touch-icon" href="iconos/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Stock EOL">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap">
@@ -1252,3 +1259,4 @@ async function generarPdf(){
 window.addEventListener('beforeunload', e => { if (Object.keys(S.borrador).length){ e.preventDefault(); e.returnValue = ''; } });
 arrancar();
 </script>
+<script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}</script>

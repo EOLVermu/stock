@@ -1,0 +1,19 @@
+{
+  "name": "El Otro Lado · Stock",
+  "short_name": "Stock EOL",
+  "description": "Stock, pedidos, recepción, precios y caja de El Otro Lado · Gastro Vermutería",
+  "lang": "es",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "background_color": "#231F20",
+  "theme_color": "#231E1F",
+  "icons": [
+    { "src": "iconos/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "iconos/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "iconos/icono-adaptable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "iconos/icono-adaptable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

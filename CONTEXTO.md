@@ -28,6 +28,7 @@ App web de control de stock, pedidos, recepción, precios y caja para **El Otro 
 2. Probar: `node build/gs_test7b.js` (servidor simulado), Playwright sobre `out/demo.html` (usuarios demo: Admin 123456, Lucía 1111, Marta 2222).
 3. Apps Script: en el editor (navegador de la app, cuenta del bar = `/u/1/`), sustituir el contenido de `Código.gs` / `Index.html` con `monaco.editor.getModels()[i].setValue(...)`; para cambios pequeños aplicar pares viejo→nuevo y comprobar SHA-256. Guardar e **Implementar → Gestionar implementaciones → lápiz → Versión nueva → Implementar** (mismo enlace).
 4. GitHub: copiar `out/Index.html` a `index.html` del repo, cambiando `'__API_URL__'` por la URL de la implementación y añadiendo delante `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" ...>`. Commit y push (autor `Claude <noreply@anthropic.com>`).
+   - El `index.html` del repo lleva además, tras `<title>`, los `<link rel="manifest">`, iconos y metas `mobile-web-app-capable`, y al final el `<script>` que registra `sw.js`. Así Chrome lo instala como app (icono del logo, pantalla completa). Archivos: `manifest.webmanifest`, `sw.js`, `iconos/` (se generan con `python3 build/iconos.py` desde `fuente/`).
 5. Para tocar datos en bloque: añadir una función temporal al Code.gs, ejecutarla desde el editor y borrarla después.
 
 ## Usuarios
