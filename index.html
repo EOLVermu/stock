@@ -693,7 +693,17 @@ function vistaAdmin(){
 function abrirHoja(html){ document.getElementById('modal').innerHTML = `<div class="velo"><div class="hoja" role="dialog" aria-modal="true">${html}</div></div>`; }
 function cerrarHoja(){ document.getElementById('modal').innerHTML = ''; }
 const casilla = (id, txt, on) => `<label class="interruptor ancho"><input type="checkbox" id="${id}" ${on ? 'checked' : ''}> ${txt}</label>`;
-const botonesForm = () => `<p class="form-error" id="ferr" role="alert"></p><div class="botones"><button class="btn sec peq" type="button" data-cerrar>Cancelar</button><button class="btn peq" type="submit">Guardar</button></div>`;
+const botonesForm = conBorrar => `<p class="form-error" id="ferr" role="alert"></p><div class="botones">${conBorrar ? '<button class="btn peligro peq" type="button" id="bBorrar" style="margin-right:auto">Eliminar</button>' : ''}<button class="btn sec peq" type="button" data-cerrar>Cancelar</button><button class="btn peq" type="submit">Guardar</button></div>`;
+/* Confirmación antes de eliminar algo para siempre */
+function confirmarBorrado(titulo, texto, fn){
+  abrirHoja(`<h3>${titulo}</h3><p>${texto}</p><p class="form-error" id="ferr" role="alert"></p>
+    <div class="botones"><button class="btn sec peq" type="button" data-cerrar>Cancelar</button><button class="btn peligro peq" type="button" id="bSiBorrar">Sí, eliminar</button></div>`);
+  document.getElementById('bSiBorrar').onclick = async ev => {
+    const b = ev.target; b.disabled = true; b.textContent = 'Eliminando…';
+    try { const msg = await fn(); cerrarHoja(); toast(msg); render(); }
+    catch(e){ mostrarErrorForm(e.message); b.disabled = false; b.textContent = 'Sí, eliminar'; }
+  };
+}
 
 function formUsuario(nombre){
   const u = (S.datos.usuarios || []).find(x => x.nombre === nombre) || { nombre: '', rol: 'Básico', activo: true };
@@ -742,8 +752,14 @@ function formProveedor(id){
       <label>Orden en la lista<input id="p_orden" inputmode="numeric" value="${p.orden === '' || p.orden === undefined ? '' : esc(p.orden)}"></label>
       <label class="ancho">Notas<textarea id="p_notas" rows="2">${esc(p.notas)}</textarea></label>
       ${nuevo ? '' : casilla('p_activo', 'Activo (sale en almacén y pedidos)', p.activo !== false)}
-      ${botonesForm()}
+      ${botonesForm(!nuevo)}
     </form>`);
+  if (!nuevo) document.getElementById('bBorrar').onclick = () => {
+    const n = S.datos.productos.filter(x => x.proveedor === p.nombre).length;
+    confirmarBorrado('¿Eliminar ' + esc(p.nombre) + '?',
+      'Se borra para siempre' + (n ? ' junto con sus <b>' + n + (n === 1 ? ' producto' : ' productos') + '</b>' : '') + '. El historial de recuentos, pedidos y precios se conserva.<br><br>Si solo quieres que deje de salir, mejor desmarca «Activo».',
+      async () => { S.datos = await server('eliminarProveedor', { id: p.id }); return 'Proveedor eliminado'; });
+  };
   document.getElementById('fProv').onsubmit = async ev => {
     ev.preventDefault();
     const obj = { id: p.id || '', nombre: val('p_nombre'), tipo: val('p_tipo'), contacto: val('p_contacto'), telefono: val('p_telefono'),
@@ -770,8 +786,11 @@ function formProducto(id){
       <label>Precio (€, sin IVA)<input id="r_precio" inputmode="decimal" value="${tienePrecio(p) ? String(p.precio).replace('.', ',') : ''}"></label>
       <label class="ancho">Notas<textarea id="r_notas" rows="2">${esc(p.notas)}</textarea></label>
       ${nuevo ? '' : casilla('r_activo', 'Activo (sale en almacén y pedidos)', p.activo !== false)}
-      ${botonesForm()}
+      ${botonesForm(!nuevo)}
     </form>`);
+  if (!nuevo) document.getElementById('bBorrar').onclick = () => confirmarBorrado('¿Eliminar ' + esc(p.nombre) + '?',
+    'Se borra para siempre de ' + esc(p.proveedor) + '. El historial de recuentos, pedidos y precios se conserva.<br><br>Si solo quieres que deje de salir, mejor desmarca «Activo».',
+    async () => { S.datos = await server('eliminarProducto', { id: p.id }); return 'Producto eliminado'; });
   document.getElementById('fProd').onsubmit = async ev => {
     ev.preventDefault();
     const obj = { id: p.id || '', nombre: val('r_nombre'), proveedor: val('r_proveedor'), categoria: val('r_categoria'), unidad: val('r_unidad'),
