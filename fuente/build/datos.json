@@ -1,0 +1,721 @@
+{
+ "proveedores": [
+  "Nicolás y Valero",
+  "Luga Sabores",
+  "Mercadona",
+  "Dialsur",
+  "Cash Levante",
+  "Erna",
+  "Bodegas Villena",
+  "Bodegas Ruiz",
+  "Bodegas Nogueras",
+  "Campoluz",
+  "Exclusivas Uriarte",
+  "Distribuciones Disvalero",
+  "Gil Family Estates",
+  "Redisa Dibos",
+  "Anforae",
+  "Primitivo Quiles",
+  "Agustina",
+  "Jesús Latas",
+  "Mónica y Miguel Ángel"
+ ],
+ "productos": [
+  {
+   "producto": "Pan",
+   "proveedor": "Nicolás y Valero",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Focaccia",
+   "proveedor": "Nicolás y Valero",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Queso picante",
+   "proveedor": "Nicolás y Valero",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Pulled pork",
+   "proveedor": "Nicolás y Valero",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Cochinita",
+   "proveedor": "Nicolás y Valero",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Bao negro",
+   "proveedor": "Nicolás y Valero",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Coulant blanco",
+   "proveedor": "Nicolás y Valero",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Jamón",
+   "proveedor": "Nicolás y Valero",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Regaña normal",
+   "proveedor": "Luga Sabores",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Regaña negra",
+   "proveedor": "Luga Sabores",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Lacón",
+   "proveedor": "Luga Sabores",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Donostiarra",
+   "proveedor": "Luga Sabores",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Pan feo",
+   "proveedor": "Luga Sabores",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Naranjas",
+   "proveedor": "Mercadona",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Limones",
+   "proveedor": "Mercadona",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Cebollino",
+   "proveedor": "Mercadona",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Albahaca",
+   "proveedor": "Mercadona",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Patatas bravas",
+   "proveedor": "Mercadona",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Provoleta",
+   "proveedor": "Mercadona",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Mozzarella",
+   "proveedor": "Mercadona",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Queso tostado",
+   "proveedor": "Mercadona",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Pimiento rojo",
+   "proveedor": "Mercadona",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Tomates cherry",
+   "proveedor": "Mercadona",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Líquido WC",
+   "proveedor": "Mercadona",
+   "categoria": "Limpieza"
+  },
+  {
+   "producto": "Jabón de manos",
+   "proveedor": "Mercadona",
+   "categoria": "Limpieza"
+  },
+  {
+   "producto": "Papas",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Mejillones",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Berberechos buenos",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Hígado de bacalao",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Ventresca",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Atún",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Alcachofas",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Pimientos del piquillo",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Salsa de trufa",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Queso para nachos",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Nachos",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Cebollitas",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Pepinillos",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Piparras",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Mayonesa",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Anchoas",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Palillos finos",
+   "proveedor": "Dialsur",
+   "categoria": "Menaje"
+  },
+  {
+   "producto": "Palillos gordos",
+   "proveedor": "Dialsur",
+   "categoria": "Menaje"
+  },
+  {
+   "producto": "Palillos banderillas",
+   "proveedor": "Dialsur",
+   "categoria": "Menaje"
+  },
+  {
+   "producto": "Mermelada de tomate",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Fantasia",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Queso gouda en lonchas",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Queso cheddar en lonchas",
+   "proveedor": "Dialsur",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Berberechos",
+   "proveedor": "Cash Levante",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Navajas",
+   "proveedor": "Cash Levante",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Izaguirre",
+   "proveedor": "Cash Levante",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Aperol",
+   "proveedor": "Cash Levante",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Ensaladilla",
+   "proveedor": "Erna",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Tortillas",
+   "proveedor": "Erna",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Boquerones en vinagre",
+   "proveedor": "Erna",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Ahumados",
+   "proveedor": "Erna",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Caracoles",
+   "proveedor": "Erna",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Mejillones",
+   "proveedor": "Erna",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Barril normal",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Barril 1906",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "1/3",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "1/5",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Sin 0,0",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Sin tostada 0,0",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "La Pelirroja",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Red Vintage",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Lupia",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Reposada",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Zumo de piña",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Zumo de melocotón",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Agua",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Pan sin gluten",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Papas",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Mejillones al vapor",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Tomate de botella",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Panchitos picantes",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Olivas rellenas",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Lomo de orza",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Gambas al ajillo",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Capellán",
+   "proveedor": "Bodegas Villena",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Heineken",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Águila sin filtrar",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Judas",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Paulaner",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Radler",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Coca-Cola",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Coca-Cola Zero",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Coca-Cola Zero Zero",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Fanta naranja",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Fanta limón",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Aquarius naranja",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Aquarius limón",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Fuze Tea",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Sprite",
+   "proveedor": "Bodegas Ruiz",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Vermut González Byass",
+   "proveedor": "Bodegas Nogueras",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Bitter Kas",
+   "proveedor": "Bodegas Nogueras",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Schweppes",
+   "proveedor": "Bodegas Nogueras",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Otros",
+   "proveedor": "Bodegas Nogueras",
+   "categoria": "Bebida"
+  },
+  {
+   "producto": "Ribera",
+   "proveedor": "Campoluz",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Rioja",
+   "proveedor": "Campoluz",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "De la zona",
+   "proveedor": "Campoluz",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Verdejo",
+   "proveedor": "Campoluz",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Godello",
+   "proveedor": "Campoluz",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Otros",
+   "proveedor": "Campoluz",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "José Pariente",
+   "proveedor": "Exclusivas Uriarte",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Carmelo Rodero",
+   "proveedor": "Exclusivas Uriarte",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Tarima Hill / Triga",
+   "proveedor": "Distribuciones Disvalero",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Triga",
+   "proveedor": "Distribuciones Disvalero",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Juan Gil",
+   "proveedor": "Gil Family Estates",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Laya / Atalaya / Alaya / Vigía",
+   "proveedor": "Gil Family Estates",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Otros",
+   "proveedor": "Gil Family Estates",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Vermut Padró",
+   "proveedor": "Redisa Dibos",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Vermut Mirra",
+   "proveedor": "Redisa Dibos",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Godeval",
+   "proveedor": "Redisa Dibos",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Otros",
+   "proveedor": "Redisa Dibos",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Sangarida",
+   "proveedor": "Anforae",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Pepe Mendoza",
+   "proveedor": "Anforae",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Vermut",
+   "proveedor": "Primitivo Quiles",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Mistela",
+   "proveedor": "Primitivo Quiles",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Vermut Agustina",
+   "proveedor": "Agustina",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Ribera",
+   "proveedor": "Jesús Latas",
+   "categoria": "Vino y vermut"
+  },
+  {
+   "producto": "Boquerón frito",
+   "proveedor": "Jesús Latas",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Anchoas buenas",
+   "proveedor": "Jesús Latas",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Navajas en aceite",
+   "proveedor": "Jesús Latas",
+   "categoria": "Comida"
+  },
+  {
+   "producto": "Friegasuelos",
+   "proveedor": "Mónica y Miguel Ángel",
+   "categoria": "Limpieza"
+  },
+  {
+   "producto": "Abrillantador",
+   "proveedor": "Mónica y Miguel Ángel",
+   "categoria": "Limpieza"
+  },
+  {
+   "producto": "Para el lavavajillas",
+   "proveedor": "Mónica y Miguel Ángel",
+   "categoria": "Limpieza"
+  },
+  {
+   "producto": "Líquido azul",
+   "proveedor": "Mónica y Miguel Ángel",
+   "categoria": "Limpieza"
+  },
+  {
+   "producto": "Líquido rosa aseos",
+   "proveedor": "Mónica y Miguel Ángel",
+   "categoria": "Limpieza"
+  },
+  {
+   "producto": "Bolsas pequeñas",
+   "proveedor": "Mónica y Miguel Ángel",
+   "categoria": "Menaje"
+  },
+  {
+   "producto": "Bolsas grandes",
+   "proveedor": "Mónica y Miguel Ángel",
+   "categoria": "Menaje"
+  },
+  {
+   "producto": "Cheminé",
+   "proveedor": "Mónica y Miguel Ángel",
+   "categoria": "Menaje"
+  },
+  {
+   "producto": "Papel de aseo",
+   "proveedor": "Mónica y Miguel Ángel",
+   "categoria": "Limpieza"
+  },
+  {
+   "producto": "Papel de manos",
+   "proveedor": "Mónica y Miguel Ángel",
+   "categoria": "Limpieza"
+  },
+  {
+   "producto": "Lejía",
+   "proveedor": "Mónica y Miguel Ángel",
+   "categoria": "Limpieza"
+  }
+ ],
+ "sup_cat": {
+  "Nicolás y Valero": "Comida",
+  "Luga Sabores": "Comida",
+  "Mercadona": "Comida",
+  "Dialsur": "Comida",
+  "Cash Levante": "Comida",
+  "Erna": "Comida",
+  "Bodegas Villena": "Bebida",
+  "Bodegas Ruiz": "Bebida",
+  "Bodegas Nogueras": "Bebida",
+  "Campoluz": "Vino y vermut",
+  "Exclusivas Uriarte": "Vino y vermut",
+  "Distribuciones Disvalero": "Vino y vermut",
+  "Gil Family Estates": "Vino y vermut",
+  "Redisa Dibos": "Vino y vermut",
+  "Anforae": "Vino y vermut",
+  "Primitivo Quiles": "Vino y vermut",
+  "Agustina": "Vino y vermut",
+  "Jesús Latas": "Comida",
+  "Mónica y Miguel Ángel": "Limpieza"
+ }
+}
