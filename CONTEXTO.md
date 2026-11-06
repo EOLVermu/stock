@@ -38,7 +38,6 @@ Administradores: Edu, Cristy, Miguel (PIN de 6). Básicos: Agustina, Rosana (PIN
 
 ## Pendiente
 
-- Cambiar los PIN 1234 de Agustina y Rosana: **ahora es obligatorio**, con el mismo PIN las dos no pueden entrar.
 - Archivar la implementación vieja de la cuenta personal de Edu (enlace `AKfycby0VO…`).
 - 58 productos sin precio (no salían en las facturas del 3T): Nicolás y Valero (salvo focaccia y cochinita), cervezas de Bodegas Ruiz, artesanas de Villena, Uriarte, Disvalero, Gil Family, Anforae, Jesús Latas…
 - Datos de contacto vacíos: Bodegas Ruiz, Bodegas Nogueras, Uriarte, Disvalero, Gil Family, Anforae, Jesús Latas.
