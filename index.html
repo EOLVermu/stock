@@ -72,6 +72,8 @@ button{cursor:pointer}
 .puntos{display:flex;gap:14px;justify-content:center;margin:4px 0}
 .puntos i{width:16px;height:16px;border-radius:50%;border:2px solid var(--beige)}
 .puntos i.on{background:var(--beige)}
+.puntos i:nth-child(n+5){margin-right:-30px}  /* el 5.º y 6.º no cuentan para centrar: los 4 primeros nunca se mueven */
+.puntos i.hueco{visibility:hidden}
 .teclado{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .teclado button{height:58px;border-radius:14px;border:1px solid rgba(214,188,168,.35);background:rgba(43,37,38,.8);color:var(--beige);font-size:24px;font-weight:600}
 .teclado button.vacio{visibility:hidden}
@@ -442,7 +444,7 @@ function vistaEntrar(app){
   const n = L.pin.length;
   app.innerHTML = `<section class="portada"><div class="wrap">
       <p class="saludo">Hola<small>Escribe tu PIN</small></p>
-      <div class="puntos ${L.error ? 'agita' : ''}" aria-label="${n} números escritos">${Array.from({length: Math.max(4, n)}, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</div>
+      <div class="puntos ${L.error ? 'agita' : ''}" aria-label="${n} números escritos">${Array.from({length: PIN_MAX}, (_, i) => `<i class="${i < n ? 'on' : i >= 4 ? 'hueco' : ''}"></i>`).join('')}</div>
       <p class="error" role="alert">${esc(L.error)}</p>
       <div class="teclado">${[1,2,3,4,5,6,7,8,9].map(d => `<button type="button" data-tecla="${d}">${d}</button>`).join('')}
         <button type="button" data-tecla="borrar" aria-label="Borrar">⌫</button><button type="button" data-tecla="0">0</button><button type="button" data-tecla="ok" class="tecla-ok" ${n < 4 ? 'disabled' : ''}>Entrar</button></div>
