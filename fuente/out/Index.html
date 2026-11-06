@@ -695,6 +695,48 @@ function abrirHoja(html){ document.getElementById('modal').innerHTML = `<div cla
 function cerrarHoja(){ document.getElementById('modal').innerHTML = ''; }
 const casilla = (id, txt, on) => `<label class="interruptor ancho"><input type="checkbox" id="${id}" ${on ? 'checked' : ''}> ${txt}</label>`;
 const botonesForm = conBorrar => `<p class="form-error" id="ferr" role="alert"></p><div class="botones">${conBorrar ? '<button class="btn peligro peq" type="button" id="bBorrar" style="margin-right:auto">Eliminar</button>' : ''}<button class="btn sec peq" type="button" data-cerrar>Cancelar</button><button class="btn peq" type="submit">Guardar</button></div>`;
+/* Cambios sin guardar al volver atrás (flecha de la app o botón atrás del móvil) */
+function cambiosPendientes(){
+  const P = S.pantalla;
+  if (P === 'almacen' && Object.keys(S.borrador).length) return {
+    n: Object.keys(S.borrador).length, que: 'el recuento',
+    guardar: async () => { await guardarRecuento(); return !Object.keys(S.borrador).length; },
+    descartar: () => { S.borrador = {}; guardarBorrador(); } };
+  if (P === 'pedido' && Object.keys(S.cantidades).length) return {
+    n: Object.keys(S.cantidades).length, que: 'las cantidades del pedido',
+    guardar: () => guardarCantidades(false),
+    descartar: () => { S.cantidades = {}; } };
+  if (P === 'recepcion' && S.recep && Object.values(S.recep.ahora).some(v => num(v) > 0)) return {
+    n: Object.values(S.recep.ahora).filter(v => num(v) > 0).length, que: 'la recepción',
+    guardar: async () => { await enviarRecepcion(false); return !S.recep; },
+    descartar: () => { S.recep.ahora = {}; } };
+  if (P === 'caja' && S.caja.form && S.caja.form.fecha === S.caja.sel){
+    const c = (S.datos.caja || []).find(x => x.fecha === S.caja.sel) || {}, f = S.caja.form;
+    const igual = (a, b) => String(num(a) === '' ? '' : num(a)) === String(num(b) === '' ? '' : num(b));
+    if (!igual(f.efectivo, c.efectivo ?? '') || !igual(f.tarjeta, c.tarjeta ?? '') || (f.notas || '') !== (c.notas || '')) return {
+      n: 0, que: 'la caja del día',
+      guardar: async () => { await guardarCaja(false); return !S.caja.form; },
+      descartar: () => { S.caja.form = null; } };
+  }
+  return null;
+}
+function salirCon(seguir){
+  const c = cambiosPendientes();
+  if (!c) return seguir();
+  S.salida = { c, seguir };
+  abrirHoja(`<h3>Tienes cambios sin guardar</h3>
+    <p>Has cambiado ${esc(c.que)}${c.n ? ` (${c.n} ${c.n === 1 ? 'producto' : 'productos'})` : ''} y no lo has guardado. ¿Quieres guardarlo antes de salir?</p>
+    <div class="botones"><button class="btn sec peq" type="button" data-cerrar>Seguir aquí</button><button class="btn peligro peq" type="button" data-salir="no">Salir sin guardar</button><button class="btn peq" type="button" data-salir="si">Guardar y salir</button></div>`);
+}
+async function decidirSalida(guardar){
+  const x = S.salida; S.salida = null; cerrarHoja();
+  if (!x) return;
+  if (guardar){ if (!(await x.c.guardar())) return; }   // si no se pudo guardar, se queda aquí con los cambios
+  else x.c.descartar();
+  x.seguir();
+}
+const volverLista = () => { S.recep = null; S.recepConfirmar = false; render(); };
+
 /* Confirmación antes de eliminar algo para siempre */
 function confirmarBorrado(titulo, texto, fn){
   abrirHoja(`<h3>${titulo}</h3><p>${texto}</p><p class="form-error" id="ferr" role="alert"></p>
@@ -1001,9 +1043,10 @@ document.addEventListener('click', async e => {
   const t = e.target.closest('button, a');
   if (!t) { if (e.target.classList.contains('velo')) cerrarHoja(); return; }
   if (t.dataset.tecla){ tecla(t.dataset.tecla); return; }
-  if (t.dataset.ir){ ir(t.dataset.ir); return; }
+  if (t.dataset.ir){ const d = t.dataset.ir; salirCon(() => ir(d)); return; }
+  if (t.dataset.salir){ await decidirSalida(t.dataset.salir === 'si'); return; }
   if (t.dataset.recep){ S.recep = { num: t.dataset.recep, ahora: {} }; S.recepConfirmar = false; window.scrollTo(0, 0); render(); return; }
-  if ('recepLista' in t.dataset){ S.recep = null; render(); return; }
+  if ('recepLista' in t.dataset){ salirCon(volverLista); return; }
   const rec = t.closest('.rec');
   if (rec && t.dataset.rpaso){ tocarRecep(rec.dataset.id, (num(S.recep.ahora[rec.dataset.id]) || 0) + Number(t.dataset.rpaso)); return; }
   if (rec && 'rtodo' in t.dataset){
@@ -1266,9 +1309,9 @@ document.getElementById('btnArriba').addEventListener('click', e => { e.stopProp
 /* Botón atrás del móvil: hace lo mismo que la flecha de la app y nunca sale de ella */
 function atras(){
   const modal = document.getElementById('modal');
-  if (modal.innerHTML){ cerrarHoja(); return; }
-  if (S.pantalla === 'recepcion' && S.recep){ S.recep = null; S.recepConfirmar = false; render(); return; }
-  if (S.pantalla !== 'entrar' && S.pantalla !== 'inicio'){ ir('inicio'); return; }
+  if (modal.innerHTML){ S.salida = null; cerrarHoja(); return; }
+  if (S.pantalla === 'recepcion' && S.recep){ salirCon(volverLista); return; }
+  if (S.pantalla !== 'entrar' && S.pantalla !== 'inicio'){ salirCon(() => ir('inicio')); return; }
   // en la pantalla de inicio o de entrada no hace nada
 }
 try {
