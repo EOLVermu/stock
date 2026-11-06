@@ -33,6 +33,8 @@ const ID_HOJA = '1K378o0x8F9gB85gD-R1UYW1zYJfPd1Afa3bOeSR52xU';
 const ADMIN = 'Administrador';
 const MAX_FALLOS = 5;      // intentos de PIN fallidos seguidos antes de bloquear
 const MIN_BLOQUEO = 15;    // minutos de bloqueo
+const MAX_FALLOS_ENTRADA = 10;   // en la pantalla de entrada (solo PIN): fallos seguidos antes de bloquearla
+const MIN_BLOQUEO_ENTRADA = 5;   // minutos que queda bloqueada
 const LARGO_PIN = { Administrador: 6, 'Básico': 4 };
 const BASICO = 'Básico';
 
@@ -49,7 +51,7 @@ function doGet() {
 // La pantalla (Index.html) puede funcionar aquí dentro o alojada en otra web; en ese caso
 // llama a estas mismas funciones por POST, sin la sesión de Google (evita el fallo de varias cuentas).
 const API_ = {
-  usuariosPublicos: () => usuariosPublicos(), entrar: (...a) => entrar(...a), obtenerDatos: (...a) => obtenerDatos(...a), guardarRecuento: (...a) => guardarRecuento(...a),
+  entrar: (...a) => entrar(...a), obtenerDatos: (...a) => obtenerDatos(...a), guardarRecuento: (...a) => guardarRecuento(...a),
   guardarCantidades: (...a) => guardarCantidades(...a), marcarPedidoHecho: (...a) => marcarPedidoHecho(...a),
   recepcionarPedido: (...a) => recepcionarPedido(...a), guardarCaja: (...a) => guardarCaja(...a),
   actualizarPrecio: (...a) => actualizarPrecio(...a), guardarPdf: (...a) => guardarPdf(...a),
@@ -241,15 +243,29 @@ function auth_(cred, soloAdmin) {
   return { nombre: u.nombre, rol: u.rol };
 }
 
-/** Nombres para la pantalla de entrada con el largo de su PIN (no lleva el PIN) */
-function usuariosPublicos() {
-  return usuarios_().filter(u => u.activo && u.pin !== '').map(u => ({ nombre: u.nombre, largo: u.pin.length }));
-}
-
 /** Entrar: valida y devuelve el usuario y los datos de su rol */
 function entrar(cred) {
-  const u = auth_(cred);
+  const u = (cred && cred.nombre) ? auth_(cred) : authPin_(cred);
   return { usuario: u, datos: datos_(u) };
+}
+
+/** Entrada solo con PIN: el PIN identifica al usuario. Bloqueo general tras varios fallos seguidos. */
+function authPin_(cred) {
+  const pin = txt_(cred && cred.pin);
+  const cache = CacheService.getScriptCache();
+  const clave = 'fallos_entrada';
+  const fallos = Number(cache.get(clave) || 0);
+  const bloqueo = 'SESION: Demasiados intentos fallidos. Espera ' + MIN_BLOQUEO_ENTRADA + ' minutos y vuelve a probar.';
+  if (fallos >= MAX_FALLOS_ENTRADA) throw new Error(bloqueo);
+  const quienes = pin ? usuarios_().filter(x => x.activo && x.pin !== '' && x.pin === pin) : [];
+  if (quienes.length > 1) throw new Error('SESION: Ese PIN lo tienen varias personas. Un administrador tiene que poner a cada una el suyo.');
+  if (!quienes.length) {
+    cache.put(clave, String(fallos + 1), MIN_BLOQUEO_ENTRADA * 60);
+    if (fallos + 1 >= MAX_FALLOS_ENTRADA) throw new Error(bloqueo);
+    throw new Error('SESION: PIN incorrecto.');
+  }
+  if (fallos) cache.remove(clave);
+  return { nombre: quienes[0].nombre, rol: quienes[0].rol };
 }
 
 /* ---------- Lectura ---------- */
@@ -277,9 +293,9 @@ function productoObj_(p) {
 
 function datos_(u) {
   const esAdmin = u.rol === ADMIN;
-  const ordenar = (a, b) => (a.orden === '' ? 999 : a.orden) - (b.orden === '' ? 999 : b.orden);
-  let proveedores = leerTabla_(HOJA.PROVEEDORES, 'Proveedor').map(proveedorObj_).sort(ordenar);
-  let productos = leerTabla_(HOJA.PRODUCTOS, 'Producto').map(productoObj_);
+  const alfa = (a, b) => String(a.nombre).localeCompare(String(b.nombre), 'es', { sensitivity: 'base', numeric: true });
+  let proveedores = leerTabla_(HOJA.PROVEEDORES, 'Proveedor').map(proveedorObj_).sort(alfa);
+  let productos = leerTabla_(HOJA.PRODUCTOS, 'Producto').map(productoObj_).sort(alfa);
   if (!esAdmin) {
     // Usuario básico: solo lo necesario para contar
     proveedores = proveedores.filter(p => p.activo).map(p => ({ id: p.id, nombre: p.nombre, orden: p.orden, activo: true }));
@@ -477,6 +493,7 @@ function guardarUsuario(cred, u) {
     const largo = LARGO_PIN[rol];
     const quien = rol === ADMIN ? 'un administrador' : 'un usuario básico';
     if (pin && !new RegExp('^\\d{' + largo + '}$').test(pin)) throw new Error('El PIN de ' + quien + ' tiene que tener ' + largo + ' números.');
+    if (pin && todos.some(x => x.pin === pin && norm_(x.nombre) !== norm_(u.original))) throw new Error('Ese PIN ya lo usa otra persona. Elige otro.');
     const antes = todos.find(x => norm_(x.nombre) === norm_(u.original));
     if (!pin && antes && antes.rol !== rol && antes.pin.length !== largo) throw new Error('Al cambiarle el rol, ponle un PIN nuevo de ' + largo + ' números.');
     // No dejar la app sin administradores activos

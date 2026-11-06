@@ -54,7 +54,10 @@ window.DEMO_DATOS = %s;
     return x; }
   const api = {
     usuariosPublicos(){ return U.filter(u => u.activo).map(u => ({ nombre: u.nombre, largo: String(u.pin).length })); },
-    entrar(c){ const u = auth(c); return {usuario:u, datos:datos(u)}; },
+    entrar(c){ let u;
+      if (c && c.nombre) u = auth(c);
+      else { const q = U.filter(x => x.activo && x.pin === String(c && c.pin)); if (q.length !== 1) throw new Error('SESION: PIN incorrecto.'); u = {nombre:q[0].nombre, rol:q[0].rol}; }
+      return {usuario:u, datos:datos(u)}; },
     obtenerDatos(c){ return datos(auth(c)); },
     guardarRecuento(c, pl){ const u = auth(c), now = new Date().toISOString();
       pl.items.forEach(it => { const p = D.productos.find(x => x.id === it.id); if (!p) return;

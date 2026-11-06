@@ -75,6 +75,8 @@ button{cursor:pointer}
 .teclado{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .teclado button{height:58px;border-radius:14px;border:1px solid rgba(214,188,168,.35);background:rgba(43,37,38,.8);color:var(--beige);font-size:24px;font-weight:600}
 .teclado button.vacio{visibility:hidden}
+.teclado button.tecla-ok{background:var(--beige);color:var(--negro);font-size:19px;font-weight:700;border-color:var(--beige)}
+.teclado button.tecla-ok:disabled{opacity:.35}
 .entrar-nombre{display:flex;flex-direction:column;gap:12px;margin:8px 0 4px}
 .entrar-nombre input{height:56px;border-radius:14px;border:1px solid rgba(214,188,168,.45);background:rgba(43,37,38,.85);color:var(--beige);font-size:20px;padding:0 16px;font-family:inherit}
 .entrar-nombre input::placeholder{color:rgba(214,188,168,.5)}
@@ -131,6 +133,9 @@ select.sel{background:var(--surface);border:1px solid var(--line);border-radius:
 .linkbtn{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;font-size:13px}
 
 /* Barra de acción inferior */
+.arriba{position:fixed;left:max(10px,calc(50% - 424px));opacity:.92;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:16;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.arriba[hidden]{display:none}
+.arriba svg{width:22px;height:22px}
 .accion{position:fixed;left:0;right:0;bottom:0;z-index:15;pointer-events:none;padding-bottom:env(safe-area-inset-bottom,0px)}
 .accion .wrap{display:flex;justify-content:center;padding-block:14px}
 .btn{border:0;border-radius:12px;padding:13px 20px;font-weight:700;font-size:17px;background:var(--brand);color:var(--brand-ink);pointer-events:auto;box-shadow:0 6px 20px rgba(0,0,0,.35)}
@@ -267,6 +272,7 @@ h3.sec{font-family:var(--display);font-size:19px;margin:18px 0 6px}
 
 <div id="app"><div class="cargando">Cargando…</div></div>
 <div id="modal"></div>
+<button type="button" class="arriba" id="btnArriba" aria-label="Volver arriba" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 15l6-6 6 6"/></svg></button>
 <div class="toast" id="toast" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
@@ -334,11 +340,7 @@ function setSync(t){ const el = document.getElementById('sync'); if (el) el.text
 async function arrancar(){ await irAEntrar(); }
 const claveBorrador = () => 'eol_borrador_' + sinAcentos(S.usuario ? S.usuario.nombre : '');
 async function irAEntrar(msg){
-  S.pantalla = 'entrar'; S.login = { nombre: '', pin: '', error: msg || '' };
-  if (!S.nombres.length){
-    render();
-    try { S.nombres = await llamar('usuariosPublicos'); } catch(e){ S.nombres = []; S.login.error = 'No se pudo conectar. Revisa la conexión.'; }
-  }
+  S.pantalla = 'entrar'; S.login = { pin: '', error: msg || '' };
   render();
 }
 function salir(msg){
@@ -369,14 +371,20 @@ function toast(t){
 const productosActivos = () => S.datos.productos.filter(p => p.activo !== false && provActivo(p.proveedor));
 const provActivo = n => { const p = S.datos.proveedores.find(x => x.nombre === n); return !p || p.activo !== false; };
 const provPorNombre = n => S.datos.proveedores.find(p => p.nombre === n) || { nombre: n };
+const alfa = (a, b) => String(a || '').localeCompare(String(b || ''), 'es', { sensitivity: 'base', numeric: true });
+/* Proveedores y productos siempre por orden alfabético (se aplica a cada dato nuevo que llega del servidor) */
+function ordenarDatos(d){
+  if (!d || d._ordenado) return;
+  (d.proveedores || []).sort((a, b) => alfa(a.nombre, b.nombre));
+  (d.productos || []).sort((a, b) => alfa(a.nombre, b.nombre));
+  (d.pedidos || []).forEach(p => (p.lineas || []).sort((a, b) => alfa(a.producto, b.producto)));
+  Object.defineProperty(d, '_ordenado', { value: true });
+}
 function grupos(lista){
-  const orden = S.datos.proveedores.map(p => p.nombre);
   const m = new Map();
   lista.forEach(p => { if (!m.has(p.proveedor)) m.set(p.proveedor, []); m.get(p.proveedor).push(p); });
-  return [...m.entries()].sort((a, b) => {
-    const ia = orden.indexOf(a[0]), ib = orden.indexOf(b[0]);
-    return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib);
-  });
+  m.forEach(ps => ps.sort((a, b) => alfa(a.nombre, b.nombre)));
+  return [...m.entries()].sort((a, b) => alfa(a[0], b[0]));
 }
 function opciones(lista, actual, vacio){
   const l = actual && !lista.includes(actual) ? [actual, ...lista] : lista;
@@ -402,6 +410,8 @@ const tienePrecio = p => p.precio !== '' && p.precio !== undefined && p.precio !
 /* ===================== Render principal ===================== */
 function render(){
   const app = document.getElementById('app');
+  ordenarDatos(S.datos);
+  setTimeout(mirarArriba, 0);
   if (S.pantalla === 'entrar') return vistaEntrar(app);
   if (S.pantalla === 'inicio') return vistaInicio(app);
   if (!S.datos) return;
@@ -425,45 +435,41 @@ function render(){
 function ir(p){ S.pantalla = p; S.confirmar = ''; S.recep = null; S.recepConfirmar = false; S.filtro = { q: '', prov: '', modo: 'todos' }; document.getElementById('app').innerHTML = ''; window.scrollTo(0, 0); render(); }
 
 /* ---------- ENTRAR ---------- */
-// Nombre escrito a mano (no se muestra la lista de usuarios) y PIN de 4 cifras (6 los administradores).
+// Solo PIN: el PIN dice quién eres. 4 cifras los básicos (botón Entrar), 6 los administradores (entra solo).
 const PIN_MAX = 6;
 function vistaEntrar(app){
   const L = S.login;
   const n = L.pin.length;
   app.innerHTML = `<section class="portada"><div class="wrap">
-    ${!L.nombre ? `
-      <p class="saludo">¿Quién eres?<small>Elige tu nombre</small></p>
-      <div class="nombres">${S.nombres.map(x => `<button type="button" data-nombre="${esc(x.nombre)}" data-largo="${x.largo}">${esc(x.nombre)}</button>`).join('') || (L.error ? '' : '<p class="muted">Cargando…</p>')}</div>
-      <p class="error" role="alert">${esc(L.error)}</p>`
-    : `
-      <p class="saludo">Hola, ${esc(L.nombre)}<small>Escribe tu PIN</small></p>
-      <div class="puntos ${L.error ? 'agita' : ''}" aria-label="${n} números escritos">${Array.from({length: L.largo || 4}, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</div>
+      <p class="saludo">Hola<small>Escribe tu PIN</small></p>
+      <div class="puntos ${L.error ? 'agita' : ''}" aria-label="${n} números escritos">${Array.from({length: Math.max(4, n)}, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</div>
       <p class="error" role="alert">${esc(L.error)}</p>
       <div class="teclado">${[1,2,3,4,5,6,7,8,9].map(d => `<button type="button" data-tecla="${d}">${d}</button>`).join('')}
-        <button type="button" data-tecla="otro" style="font-size:15px">Cambiar</button><button type="button" data-tecla="0">0</button><button type="button" data-tecla="borrar" aria-label="Borrar">⌫</button></div>
-      ${L.enviando ? '<p class="muted" style="text-align:center;margin-top:12px">Entrando…</p>' : ''}`}
+        <button type="button" data-tecla="borrar" aria-label="Borrar">⌫</button><button type="button" data-tecla="0">0</button><button type="button" data-tecla="ok" class="tecla-ok" ${n < 4 ? 'disabled' : ''}>Entrar</button></div>
+      ${L.enviando ? '<p class="muted" style="text-align:center;margin-top:12px">Entrando…</p>' : ''}
   </div></section>`;
 }
 async function tecla(t){
   const L = S.login;
   if (L.enviando) return;
-  if (t === 'otro'){ L.nombre = ''; L.pin = ''; L.error = ''; return render(); }
   if (t === 'borrar'){ L.pin = L.pin.slice(0, -1); L.error = ''; return render(); }
-  const largo = L.largo || 4;               // 6 cifras los administradores, 4 el resto
-  if (L.pin.length >= largo) return;
-  L.pin += t; L.error = ''; render();
-  if (L.pin.length < largo) return;         // al completar el PIN entra solo
-  const cred = { nombre: L.nombre, pin: L.pin };
+  if (t !== 'ok'){
+    if (L.pin.length >= PIN_MAX) return;
+    L.pin += t; L.error = ''; render();
+    if (L.pin.length < PIN_MAX) return;     // con 6 cifras entra solo
+  }
+  if (L.pin.length < 4) return;
+  const pin = L.pin;
   L.enviando = true; render();
   try {
-    const r = await llamar('entrar', cred);
+    const r = await llamar('entrar', { pin });
     L.enviando = false;
-    S.cred = { nombre: r.usuario.nombre, pin: cred.pin };
+    S.cred = { nombre: r.usuario.nombre, pin };
     S.usuario = r.usuario; S.datos = r.datos; S.borrador = ls.get(claveBorrador(), {}); S.pantalla = 'inicio'; render();
   } catch(e){
     L.enviando = false;
     const m = String(e.message);
-    L.pin = ''; L.error = m.includes('Demasiados') ? m.replace(/^.*SESION:\s*/, '') : (m.includes('SESION') ? 'Nombre o PIN incorrectos' : 'No se pudo conectar'); render();
+    L.pin = ''; L.error = m.includes('SESION:') ? m.replace(/^.*SESION:\s*/, '') : 'No se pudo conectar'; render();
   }
 }
 
@@ -756,7 +762,7 @@ function formProveedor(id){
       <label>Pedido mínimo (€)<input id="p_minimo" inputmode="decimal" value="${p.pedidoMinimo === '' || p.pedidoMinimo === undefined ? '' : esc(p.pedidoMinimo)}"></label>
       <label>Día de pedido<select id="p_diaPedido">${opciones(LISTAS.dias, p.diaPedido, '—')}</select></label>
       <label>Día de reparto<select id="p_diaReparto">${opciones(LISTAS.dias, p.diaReparto, '—')}</select></label>
-      <label>Orden en la lista<input id="p_orden" inputmode="numeric" value="${p.orden === '' || p.orden === undefined ? '' : esc(p.orden)}"></label>
+      
       <label class="ancho">Notas<textarea id="p_notas" rows="2">${esc(p.notas)}</textarea></label>
       ${nuevo ? '' : casilla('p_activo', 'Activo (sale en almacén y pedidos)', p.activo !== false)}
       ${botonesForm(!nuevo)}
@@ -771,7 +777,7 @@ function formProveedor(id){
     ev.preventDefault();
     const obj = { id: p.id || '', nombre: val('p_nombre'), tipo: val('p_tipo'), contacto: val('p_contacto'), telefono: val('p_telefono'),
       whatsapp: val('p_whatsapp'), email: val('p_email'), direccion: val('p_direccion'), canal: val('p_canal'), pedidoMinimo: val('p_minimo'),
-      diaPedido: val('p_diaPedido'), diaReparto: val('p_diaReparto'), orden: val('p_orden'), notas: val('p_notas'),
+      diaPedido: val('p_diaPedido'), diaReparto: val('p_diaReparto'), orden: p.orden === undefined ? '' : p.orden, notas: val('p_notas'),
       activo: nuevo ? true : document.getElementById('p_activo').checked };
     if (obj.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(obj.email)) return mostrarErrorForm('Revisa el correo electrónico.');
     await enviarForm(async () => { S.datos = await server('guardarProveedor', obj); return nuevo ? 'Proveedor creado' : 'Proveedor guardado'; });
@@ -1006,7 +1012,6 @@ function tocarBorrador(id, campo, valor){
 document.addEventListener('click', async e => {
   const t = e.target.closest('button, a');
   if (!t) { if (e.target.classList.contains('velo')) cerrarHoja(); return; }
-  if (t.dataset.nombre){ S.login.nombre = t.dataset.nombre; S.login.largo = Number(t.dataset.largo) || 4; S.login.pin = ''; S.login.error = ''; render(); return; }
   if (t.dataset.tecla){ tecla(t.dataset.tecla); return; }
   if (t.dataset.ir){ ir(t.dataset.ir); return; }
   if (t.dataset.recep){ S.recep = { num: t.dataset.recep, ahora: {} }; S.recepConfirmar = false; window.scrollTo(0, 0); render(); return; }
@@ -1025,7 +1030,13 @@ document.addEventListener('click', async e => {
   if (t.id === 'btnRecFin' || t.id === 'btnRecParcial'){ await enviarRecepcion(false); return; }
   if (t.dataset.cdia){ S.caja.sel = t.dataset.cdia; S.caja.form = null; render(); return; }
   if (t.dataset.cmes){ const mm = S.caja.mes; S.caja.mes = new Date(mm.getFullYear(), mm.getMonth() + Number(t.dataset.cmes), 1); render(); return; }
-  if ('cborrar' in t.dataset){ await guardarCaja(true); return; }
+  if ('cborrar' in t.dataset){
+    const fl = new Date(S.caja.sel + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+    abrirHoja(`<h3>¿Seguro que quieres borrar el día?</h3><p>Se borrará la caja del ${esc(fl)}.</p>
+      <div class="botones"><button class="btn sec peq" type="button" data-cerrar>Cancelar</button><button class="btn peligro peq" type="button" data-cborrarsi>Sí, borrar</button></div>`);
+    return;
+  }
+  if ('cborrarsi' in t.dataset){ cerrarHoja(); await guardarCaja(true); return; }
   if ('salir' in t.dataset){ salir(); return; }
   if (t.id === 'btnQuien'){
     abrirHoja(`<h3>${esc(S.usuario.nombre)}</h3><p>${esc(S.usuario.rol)}</p><div class="botones" style="justify-content:flex-start"><button class="btn peq" type="button" data-salir>Salir y cambiar de usuario</button><button class="btn peq sec" type="button" data-cerrar>Cerrar</button></div>`);
@@ -1255,6 +1266,28 @@ async function generarPdf(){
     S._ultimoPdf = bytes;
   } catch(e){ res.innerHTML = `<div class="aviso">${esc(e.message)}</div>`; }
 }
+
+/* Flecha de volver arriba: aparece al bajar en las listas largas */
+function mirarArriba(){
+  const b = document.getElementById('btnArriba');
+  b.hidden = !(S.pantalla !== 'entrar' && S.pantalla !== 'inicio' && window.scrollY > 500);
+}
+window.addEventListener('scroll', mirarArriba, { passive: true });
+document.getElementById('btnArriba').addEventListener('click', e => { e.stopPropagation(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+/* Botón atrás del móvil: hace lo mismo que la flecha de la app y nunca sale de ella */
+function atras(){
+  const modal = document.getElementById('modal');
+  if (modal.innerHTML){ cerrarHoja(); return; }
+  if (S.pantalla === 'recepcion' && S.recep){ S.recep = null; S.recepConfirmar = false; render(); return; }
+  if (S.pantalla !== 'entrar' && S.pantalla !== 'inicio'){ ir('inicio'); return; }
+  // en la pantalla de inicio o de entrada no hace nada
+}
+try {
+  history.replaceState({ eol: 'base' }, '');
+  history.pushState({ eol: 'app' }, '');
+  window.addEventListener('popstate', () => { history.pushState({ eol: 'app' }, ''); atras(); });
+} catch(e){}
 
 window.addEventListener('beforeunload', e => { if (Object.keys(S.borrador).length){ e.preventDefault(); e.returnValue = ''; } });
 arrancar();

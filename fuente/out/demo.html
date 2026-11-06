@@ -1,0 +1,1372 @@
+<title>El Otro Lado · Stock</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: pantalla de inicio a sangre con el logo; dentro, barra de marca fija y una columna estrecha de trabajo. */
+:root{
+  --bg:#231E1F; --surface:#2E2829; --surface-2:#382F30; --line:#4A3F3F;
+  --fg:#F3E9E1; --muted:#B5A397; --brand:#D6BCA8; --brand-ink:#2B2526;
+  --warn:#E9875F; --warn-bg:#4A2C22; --ok:#9BC59D; --ok-bg:#25352A; --info:#C9B07A;
+  --negro:#2B2526; --beige:#D6BCA8;
+  --display:"Playfair Display", "Bodoni 72", Didot, Georgia, serif;
+  --body:"Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#F6F0EB; --surface:#FFFFFF; --surface-2:#F0E6DE; --line:#E1D3C8;
+    --fg:#2B2526; --muted:#7A675C; --brand:#2B2526; --brand-ink:#F3E9E1;
+    --warn:#B9471E; --warn-bg:#FBE3D8; --ok:#2F7A3A; --ok-bg:#E2F1E1; --info:#8A6A2A; color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F6F0EB; --surface:#FFFFFF; --surface-2:#F0E6DE; --line:#E1D3C8;
+  --fg:#2B2526; --muted:#7A675C; --brand:#2B2526; --brand-ink:#F3E9E1;
+  --warn:#B9471E; --warn-bg:#FBE3D8; --ok:#2F7A3A; --ok-bg:#E2F1E1; --info:#8A6A2A; color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.35;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--negro)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* ---------- Portada (entrar e inicio): siempre con los colores del logo ---------- */
+.portada{min-height:100vh;min-height:100dvh;background:#231F20 var(--logo, none) center 12% / min(100vw, 560px) no-repeat;color:var(--beige);display:flex;flex-direction:column;justify-content:flex-end}
+.portada .wrap{width:100%;padding-block:24px calc(28px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;background:linear-gradient(to bottom, rgba(35,31,32,0) 0, rgba(35,31,32,.94) 60px, #231F20 100%)}
+.portada .wrap{max-width:520px}
+.portada.completa{background-size:min(76vw, 40vh, 560px);background-position:center 3%}
+.saludo{font-family:var(--display);font-size:28px;font-weight:700;margin:0;color:var(--beige)}
+.saludo small{display:block;font-family:var(--body);font-size:14px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;opacity:.75;margin-top:2px}
+.menu{display:flex;flex-direction:column;gap:8px}
+.menu button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:56px;padding:0 18px;border-radius:14px;border:1px solid rgba(214,188,168,.45);background:rgba(43,37,38,.72);backdrop-filter:blur(6px);color:var(--beige);text-align:left}
+.menu button b{font-family:var(--display);font-weight:900;font-size:21px;letter-spacing:.06em}
+.menu button span{font-size:14px;opacity:.8;text-align:right}
+.menu button.prin{background:var(--beige);color:var(--negro);border-color:var(--beige)}
+.portada .salir{align-self:center;background:none;border:0;color:var(--beige);opacity:.7;text-decoration:underline;font-size:15px;padding:6px}
+/* Pantalla de inicio: logo arriba, botones justo debajo y "Salir" al fondo */
+.portada.inicio{justify-content:flex-start;background-image:none}
+.portada.inicio .logo-top{flex:none;width:min(62vw, 32vh, 340px);aspect-ratio:1;margin:max(8px, env(safe-area-inset-top,0px)) auto 0;background:var(--logo, none) center / contain no-repeat}
+.portada.inicio .wrap{flex:1;background:none;padding-top:4px}
+.portada.inicio .salir{margin-top:auto}
+.nombres{display:flex;flex-wrap:wrap;gap:8px}
+.nombres button{border:1px solid rgba(214,188,168,.5);background:rgba(43,37,38,.75);color:var(--beige);border-radius:999px;padding:10px 18px;font-size:18px;font-weight:600}
+.nombres button[aria-pressed="true"]{background:var(--beige);color:var(--negro)}
+.puntos{display:flex;gap:14px;justify-content:center;margin:4px 0}
+.puntos i{width:16px;height:16px;border-radius:50%;border:2px solid var(--beige)}
+.puntos i.on{background:var(--beige)}
+.teclado{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.teclado button{height:58px;border-radius:14px;border:1px solid rgba(214,188,168,.35);background:rgba(43,37,38,.8);color:var(--beige);font-size:24px;font-weight:600}
+.teclado button.vacio{visibility:hidden}
+.teclado button.tecla-ok{background:var(--beige);color:var(--negro);font-size:19px;font-weight:700;border-color:var(--beige)}
+.teclado button.tecla-ok:disabled{opacity:.35}
+.entrar-nombre{display:flex;flex-direction:column;gap:12px;margin:8px 0 4px}
+.entrar-nombre input{height:56px;border-radius:14px;border:1px solid rgba(214,188,168,.45);background:rgba(43,37,38,.85);color:var(--beige);font-size:20px;padding:0 16px;font-family:inherit}
+.entrar-nombre input::placeholder{color:rgba(214,188,168,.5)}
+.entrar-ok{width:100%;margin-top:12px}
+.entrar-ok,.entrar-nombre .btn{background:var(--beige);color:var(--negro);height:52px;font-size:17px}
+.entrar-ok:disabled{opacity:.45}
+.error{color:#F2A07E;text-align:center;min-height:20px;font-weight:600;margin:0}
+@media (prefers-reduced-motion: no-preference){ .agita{animation:agita .35s} @keyframes agita{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}} }
+
+/* ---------- Cabecera interior ---------- */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--negro);color:var(--beige);border-bottom:1px solid #4A3F3F}
+header.top .wrap{display:flex;align-items:center;gap:10px;padding-block:9px}
+.volver{display:flex;align-items:center;gap:8px;background:none;border:0;color:var(--beige);padding:4px 6px 4px 0}
+.volver img{width:38px;height:38px;border-radius:4px}
+.volver svg{width:18px;height:18px}
+.titulo{flex:1;min-width:0;font-family:var(--display);font-weight:900;font-size:17px;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.quien{border:1px solid #6B5A55;background:transparent;color:var(--beige);border-radius:999px;padding:6px 12px;font-size:14px;max-width:36vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sync{font-size:12px;color:#B5A397;white-space:nowrap}
+
+main{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
+h1{font-family:var(--display);font-weight:900;font-size:30px;line-height:1.05;margin:20px 0 4px;text-wrap:balance}
+.sub{color:var(--muted);margin:0 0 14px;font-size:15px}
+
+/* Filtros */
+.filtros{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.buscar{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px;font-size:16px}
+.fila-filtros{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+select.sel{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:14px;max-width:100%}
+
+/* Grupos por proveedor */
+.grupo{margin:18px 0 6px}
+.grupo-cab{position:sticky;top:calc(57px + env(safe-area-inset-top,0px));z-index:5;background:var(--bg);display:flex;align-items:baseline;gap:8px;padding:8px 0 6px;border-bottom:2px solid var(--brand)}
+.grupo-cab h2{font-family:var(--display);font-size:20px;font-weight:700;margin:0;flex:1;min-width:0}
+.grupo-cab span{color:var(--muted);font-size:13px;white-space:nowrap}
+
+/* Fila de producto (almacén) */
+.prod{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.prod .nom{font-weight:600;font-size:17px;min-width:0}
+.prod .meta{grid-column:1;color:var(--muted);font-size:13px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.prod.cambiado .nom::after{content:" ●";color:var(--info);font-size:12px}
+.paso{grid-row:1 / span 2;grid-column:2;display:flex;align-items:center;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.paso button{width:44px;height:44px;border:0;background:var(--surface-2);font-size:22px;font-weight:600}
+.paso input{width:54px;height:44px;border:0;background:transparent;text-align:center;font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+.paso input::placeholder{color:var(--muted);font-weight:400}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:1px 8px;font-size:12px;font-weight:600;letter-spacing:.02em}
+.pill.pedir{background:var(--warn-bg);color:var(--warn)}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.nada{border:1px dashed var(--line);color:var(--muted);font-weight:500}
+.pill.pedido{background:var(--surface-2);color:var(--info)}
+.mas{grid-column:1 / -1;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-top:6px;font-size:14px;color:var(--muted)}
+.mas input{width:70px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:16px;text-align:center}
+.linkbtn{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline;font-size:13px}
+
+/* Barra de acción inferior */
+.arriba{position:fixed;left:max(10px,calc(50% - 424px));opacity:.92;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:16;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--brand);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.arriba[hidden]{display:none}
+.arriba svg{width:22px;height:22px}
+.accion{position:fixed;left:0;right:0;bottom:0;z-index:15;pointer-events:none;padding-bottom:env(safe-area-inset-bottom,0px)}
+.accion .wrap{display:flex;justify-content:center;padding-block:14px}
+.btn{border:0;border-radius:12px;padding:13px 20px;font-weight:700;font-size:17px;background:var(--brand);color:var(--brand-ink);pointer-events:auto;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.btn[disabled]{opacity:.5}
+.btn.sec{background:var(--surface-2);color:var(--fg);box-shadow:none}
+.btn.peq{padding:9px 14px;font-size:15px;box-shadow:none}
+.btn.peligro{background:var(--warn-bg);color:var(--warn);box-shadow:none}
+a.btn{text-decoration:none;display:inline-block}
+
+/* Pedido */
+.resumen{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:6px 0 14px}
+.resumen div{background:var(--surface);padding:10px 12px;min-width:0}
+.resumen b{display:block;font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
+.resumen span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.prov{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin:14px 0;overflow:hidden}
+.prov-cab{padding:12px 14px 8px;display:flex;flex-direction:column;gap:4px;border-bottom:1px solid var(--line)}
+.prov-cab h2{font-family:var(--display);font-size:21px;margin:0}
+.prov-cab .info{color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:4px 12px}
+.prov-cab .info a{color:inherit}
+.lin{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:8px 14px;border-bottom:1px solid var(--line)}
+.lin .n{min-width:0}
+.lin .n b{font-weight:600}
+.lin .n small{display:block;color:var(--muted);font-size:12px}
+.lin input{width:64px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 6px;text-align:center;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+.lin .eur{width:64px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
+.lin.cero{opacity:.55}
+.prov-pie{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 12px;align-items:center}
+.prov-pie .total{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:600}
+.anadir{padding:8px 14px;border-bottom:1px solid var(--line)}
+.anadir select{width:100%;background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:8px;font-size:15px;color:var(--muted)}
+.aviso{background:var(--surface-2);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--muted);margin:10px 0}
+.aviso a{color:var(--fg)}
+.pdfbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:4px 0 8px}
+.vacio{text-align:center;color:var(--muted);padding:40px 10px}
+.vacio b{display:block;font-family:var(--display);font-size:22px;color:var(--fg);margin-bottom:6px}
+
+/* Precios */
+.precio-lin{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.precio-lin small{color:var(--muted);font-size:13px;display:block}
+.precio-lin .campo{display:flex;align-items:center;gap:4px}
+.precio-lin input{width:86px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px;text-align:right;font-size:17px;font-variant-numeric:tabular-nums}
+
+/* Administración */
+.segm{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px;margin:16px 0 12px}
+.segm button{border:0;background:none;border-radius:9px;padding:9px 4px;font-weight:600;font-size:15px;color:var(--muted)}
+.segm button[aria-pressed="true"]{background:var(--brand);color:var(--brand-ink)}
+.cab-lista{display:flex;align-items:center;gap:10px;justify-content:space-between;margin:6px 0 8px}
+.cab-lista p{margin:0;color:var(--muted);font-size:14px}
+.reg{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:12px 2px}
+.reg .t{flex:1;min-width:0}
+.reg .t b{display:block;font-weight:600;font-size:17px}
+.reg .t small{display:block;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reg .chev{color:var(--muted);font-size:20px}
+.reg.inactivo{opacity:.5}
+.pill.rol{background:var(--surface-2);color:var(--fg)}
+.pill.admin{background:var(--brand);color:var(--brand-ink)}
+
+/* Recepción */
+.ped{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+.ped .t{flex:1;min-width:0}
+.ped .t b{display:block;font-family:var(--display);font-size:19px}
+.ped .t small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.pill.parcial{background:var(--warn-bg);color:var(--warn)}
+.pill.pend{background:var(--surface-2);color:var(--info)}
+.volver-lista{background:none;border:0;color:var(--muted);padding:14px 0 0;font-size:15px}
+.rec{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.rec .nom{font-weight:600;font-size:17px;min-width:0}
+.rec .meta{grid-column:1;color:var(--muted);font-size:13px}
+.rec .falta{grid-column:2;grid-row:1;text-align:right;font-variant-numeric:tabular-nums}
+.rec .falta b{display:block;font-family:var(--display);font-size:24px;line-height:1}
+.rec .falta small{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.rec.listo .falta b{color:var(--ok)}
+.rec .ctrl{grid-column:1 / -1;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rec .ctrl .paso{grid-row:auto;grid-column:auto}
+.btn.todo{padding:10px 14px;font-size:15px;box-shadow:none;background:var(--surface-2);color:var(--fg)}
+.rec.listo .btn.todo{background:var(--ok-bg);color:var(--ok)}
+.barra-doble{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+/* Caja */
+.mesnav{display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px}
+.mesnav b{font-family:var(--display);font-size:22px;text-transform:capitalize}
+.mesnav button{background:var(--surface);border:1px solid var(--line);border-radius:10px;width:42px;height:42px;font-size:20px}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal .dow{text-align:center;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 0}
+.cal button{background:var(--surface);border:1px solid var(--line);border-radius:10px;min-height:54px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;font-variant-numeric:tabular-nums;min-width:0}
+.cal button .n{font-weight:600;font-size:15px}
+.cal button .v{font-size:10.5px;color:var(--ok);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.cal button.hoy{border-color:var(--brand);border-width:2px}
+.cal button.sel{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.cal button.sel .v{color:var(--brand-ink)}
+.cal button.fuera{visibility:hidden}
+.dia{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin:14px 0}
+.dia h2{font-family:var(--display);font-size:20px;margin:0 0 10px}
+.dia .campos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dia label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--muted);min-width:0}
+.dia input,.dia textarea{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px;font-size:20px;font-weight:600;text-align:right;font-variant-numeric:tabular-nums;width:100%;min-width:0;color:var(--fg)}
+.dia textarea{font-size:15px;font-weight:400;text-align:left;min-height:44px}
+.dia .total{display:flex;justify-content:space-between;align-items:baseline;border-top:2px solid var(--brand);margin-top:12px;padding-top:10px}
+.dia .total span{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--muted)}
+.dia .total b{font-family:var(--display);font-size:30px;font-variant-numeric:tabular-nums}
+.res{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 14px}
+.res div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.res span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.res b{display:block;font-family:var(--display);font-size:21px;font-variant-numeric:tabular-nums;margin:2px 0}
+.res small{display:block;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tabla-wrap{overflow-x:auto}
+table.anio{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px}
+table.anio th{text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;padding:6px 4px;border-bottom:1px solid var(--line)}
+table.anio th:first-child,table.anio td:first-child{text-align:left;text-transform:capitalize}
+table.anio td{text-align:right;padding:7px 4px;border-bottom:1px solid var(--line)}
+table.anio tr.tot td{font-weight:700;border-top:2px solid var(--brand)}
+h3.sec{font-family:var(--display);font-size:19px;margin:18px 0 6px}
+
+/* Hoja modal */
+.velo{position:fixed;inset:0;background:rgba(20,16,16,.7);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.hoja{background:var(--surface);width:100%;max-width:560px;max-height:92vh;max-height:92dvh;overflow-y:auto;border-radius:18px 18px 0 0;padding:22px max(18px,env(safe-area-inset-left,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-right,0px))}
+.hoja h3{font-family:var(--display);font-size:24px;margin:0 0 4px}
+.hoja > p{margin:0 0 14px;color:var(--muted)}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form .ancho{grid-column:1 / -1}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);font-weight:600;letter-spacing:.02em;min-width:0}
+.form input,.form select,.form textarea{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 11px;font-size:16px;font-weight:400;color:var(--fg);width:100%;min-width:0}
+.form textarea{min-height:64px;resize:vertical}
+.form .sep{grid-column:1 / -1;font-family:var(--display);font-size:17px;color:var(--fg);border-bottom:1px solid var(--line);padding-bottom:4px;margin-top:6px}
+.interruptor{flex-direction:row !important;align-items:center;gap:10px !important;color:var(--fg) !important;font-size:16px !important;font-weight:500 !important}
+.interruptor input{width:22px;height:22px}
+.botones{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.form-error{color:var(--warn);font-weight:600;margin:10px 0 0;min-height:1em}
+@media (max-width:420px){ .form{grid-template-columns:1fr} }
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;max-width:calc(100% - 32px);text-align:center}
+.cargando{min-height:100vh;display:flex;align-items:center;justify-content:center;color:var(--beige);background:var(--negro);font-size:15px;letter-spacing:.12em;text-transform:uppercase}
+</style>
+
+<div style="background:var(--info);color:#231E1F;font-size:13px;font-weight:600;text-align:center;padding:6px 16px">Demo con datos inventados. Entra como Admin (PIN 123456) o como Lucía (PIN 1111, usuario básico).</div>
+<div id="app"><div class="cargando">Cargando…</div></div>
+<div id="modal"></div>
+<button type="button" class="arriba" id="btnArriba" aria-label="Volver arriba" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 15l6-6 6 6"/></svg></button>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* DEMO: simula el servidor de Google con datos de ejemplo en memoria */
+window.DEMO_DATOS = {"pedidos": [{"num": "D1", "proveedor": "Bodegas Ruiz", "fecha": "2026-11-01T10:00:00Z", "hechoPor": "Admin", "estado": "Pendiente", "lineas": [{"id": "P081", "producto": "Heineken", "unidad": "caja", "cantidad": 3, "recibido": 0}, {"id": "P082", "producto": "Águila sin filtrar", "unidad": "caja", "cantidad": 2, "recibido": 0}, {"id": "P083", "producto": "Judas", "unidad": "caja", "cantidad": 6, "recibido": 0}, {"id": "P084", "producto": "Paulaner", "unidad": "caja", "cantidad": 4, "recibido": 0}]}, {"num": "D2", "proveedor": "Dialsur", "fecha": "2026-10-29T10:00:00Z", "hechoPor": "Admin", "estado": "Parcial", "lineas": [{"id": "P026", "producto": "Papas", "unidad": "ud", "cantidad": 5, "recibido": 5}, {"id": "P027", "producto": "Mejillones", "unidad": "ud", "cantidad": 2, "recibido": 0}, {"id": "P028", "producto": "Berberechos buenos", "unidad": "ud", "cantidad": 4, "recibido": 1}]}], "caja": [{"fecha": "2026-09-01", "efectivo": 485.38, "tarjeta": 1283.58, "total": 1768.96, "notas": "", "por": "Admin"}, {"fecha": "2026-09-02", "efectivo": 429.13, "tarjeta": 1397.53, "total": 1826.66, "notas": "", "por": "Admin"}, {"fecha": "2026-09-03", "efectivo": 496.74, "tarjeta": 729.24, "total": 1225.98, "notas": "", "por": "Admin"}, {"fecha": "2026-09-04", "efectivo": 243.07, "tarjeta": 1335.88, "total": 1578.95, "notas": "", "por": "Admin"}, {"fecha": "2026-09-05", "efectivo": 433.74, "tarjeta": 431.89, "total": 865.63, "notas": "", "por": "Admin"}, {"fecha": "2026-09-06", "efectivo": 405.91, "tarjeta": 778.62, "total": 1184.53, "notas": "", "por": "Admin"}, {"fecha": "2026-09-08", "efectivo": 307.12, "tarjeta": 731.7, "total": 1038.82, "notas": "", "por": "Admin"}, {"fecha": "2026-09-09", "efectivo": 237.55, "tarjeta": 402.87, "total": 640.42, "notas": "", "por": "Admin"}, {"fecha": "2026-09-10", "efectivo": 275.13, "tarjeta": 751.47, "total": 1026.6, "notas": "", "por": "Admin"}, {"fecha": "2026-09-11", "efectivo": 504.88, "tarjeta": 523.71, "total": 1028.59, "notas": "", "por": "Admin"}, {"fecha": "2026-09-12", "efectivo": 507.85, "tarjeta": 607.4, "total": 1115.25, "notas": "", "por": "Admin"}, {"fecha": "2026-09-13", "efectivo": 301.25, "tarjeta": 1221.57, "total": 1522.82, "notas": "", "por": "Admin"}, {"fecha": "2026-09-15", "efectivo": 459.48, "tarjeta": 832.45, "total": 1291.93, "notas": "", "por": "Admin"}, {"fecha": "2026-09-16", "efectivo": 196.75, "tarjeta": 873.46, "total": 1070.21, "notas": "", "por": "Admin"}, {"fecha": "2026-09-17", "efectivo": 306.72, "tarjeta": 1319.51, "total": 1626.23, "notas": "", "por": "Admin"}, {"fecha": "2026-09-18", "efectivo": 245.63, "tarjeta": 764.25, "total": 1009.88, "notas": "", "por": "Admin"}, {"fecha": "2026-09-19", "efectivo": 484.98, "tarjeta": 430.28, "total": 915.26, "notas": "", "por": "Admin"}, {"fecha": "2026-09-20", "efectivo": 319.67, "tarjeta": 1211.82, "total": 1531.49, "notas": "", "por": "Admin"}, {"fecha": "2026-09-22", "efectivo": 440.67, "tarjeta": 440.65, "total": 881.32, "notas": "", "por": "Admin"}, {"fecha": "2026-09-23", "efectivo": 191.85, "tarjeta": 462.58, "total": 654.43, "notas": "", "por": "Admin"}, {"fecha": "2026-09-24", "efectivo": 492.83, "tarjeta": 657.02, "total": 1149.85, "notas": "", "por": "Admin"}, {"fecha": "2026-09-25", "efectivo": 434.08, "tarjeta": 1298.55, "total": 1732.63, "notas": "", "por": "Admin"}, {"fecha": "2026-09-26", "efectivo": 295.28, "tarjeta": 672.31, "total": 967.59, "notas": "", "por": "Admin"}, {"fecha": "2026-09-27", "efectivo": 505.61, "tarjeta": 1016.98, "total": 1522.59, "notas": "", "por": "Admin"}, {"fecha": "2026-09-29", "efectivo": 269.14, "tarjeta": 1116.64, "total": 1385.78, "notas": "", "por": "Admin"}, {"fecha": "2026-09-30", "efectivo": 287.6, "tarjeta": 675.63, "total": 963.23, "notas": "", "por": "Admin"}, {"fecha": "2026-10-01", "efectivo": 181.28, "tarjeta": 1155.65, "total": 1336.93, "notas": "", "por": "Admin"}, {"fecha": "2026-10-02", "efectivo": 491.6, "tarjeta": 1033.98, "total": 1525.58, "notas": "", "por": "Admin"}, {"fecha": "2026-10-03", "efectivo": 500.71, "tarjeta": 424.26, "total": 924.97, "notas": "", "por": "Admin"}, {"fecha": "2026-10-04", "efectivo": 259.51, "tarjeta": 875.19, "total": 1134.7, "notas": "", "por": "Admin"}, {"fecha": "2026-10-06", "efectivo": 505.3, "tarjeta": 1353.91, "total": 1859.21, "notas": "", "por": "Admin"}, {"fecha": "2026-10-07", "efectivo": 311.42, "tarjeta": 651.05, "total": 962.47, "notas": "", "por": "Admin"}, {"fecha": "2026-10-08", "efectivo": 326.18, "tarjeta": 893.47, "total": 1219.65, "notas": "", "por": "Admin"}, {"fecha": "2026-10-09", "efectivo": 495.55, "tarjeta": 582.94, "total": 1078.49, "notas": "", "por": "Admin"}, {"fecha": "2026-10-10", "efectivo": 452.87, "tarjeta": 1138.49, "total": 1591.36, "notas": "", "por": "Admin"}, {"fecha": "2026-10-11", "efectivo": 459.74, "tarjeta": 1172.81, "total": 1632.55, "notas": "", "por": "Admin"}, {"fecha": "2026-10-13", "efectivo": 386.47, "tarjeta": 727.8, "total": 1114.27, "notas": "", "por": "Admin"}, {"fecha": "2026-10-14", "efectivo": 288.65, "tarjeta": 761.86, "total": 1050.51, "notas": "", "por": "Admin"}, {"fecha": "2026-10-15", "efectivo": 445.96, "tarjeta": 479.01, "total": 924.97, "notas": "", "por": "Admin"}, {"fecha": "2026-10-16", "efectivo": 247.09, "tarjeta": 1152.89, "total": 1399.98, "notas": "", "por": "Admin"}, {"fecha": "2026-10-17", "efectivo": 264.08, "tarjeta": 464.73, "total": 728.81, "notas": "", "por": "Admin"}, {"fecha": "2026-10-18", "efectivo": 191.51, "tarjeta": 952.59, "total": 1144.1, "notas": "", "por": "Admin"}, {"fecha": "2026-10-20", "efectivo": 290.76, "tarjeta": 1380.26, "total": 1671.02, "notas": "", "por": "Admin"}, {"fecha": "2026-10-21", "efectivo": 480.38, "tarjeta": 1387.82, "total": 1868.2, "notas": "", "por": "Admin"}, {"fecha": "2026-10-22", "efectivo": 270.06, "tarjeta": 484.08, "total": 754.14, "notas": "", "por": "Admin"}, {"fecha": "2026-10-23", "efectivo": 212.78, "tarjeta": 898.48, "total": 1111.26, "notas": "", "por": "Admin"}, {"fecha": "2026-10-24", "efectivo": 421.32, "tarjeta": 846.96, "total": 1268.28, "notas": "", "por": "Admin"}, {"fecha": "2026-10-25", "efectivo": 259.63, "tarjeta": 816.84, "total": 1076.47, "notas": "", "por": "Admin"}, {"fecha": "2026-10-27", "efectivo": 390.9, "tarjeta": 1074.11, "total": 1465.01, "notas": "", "por": "Admin"}, {"fecha": "2026-10-28", "efectivo": 434.31, "tarjeta": 1246.99, "total": 1681.3, "notas": "", "por": "Admin"}, {"fecha": "2026-10-29", "efectivo": 405.9, "tarjeta": 521.16, "total": 927.06, "notas": "", "por": "Admin"}, {"fecha": "2026-10-30", "efectivo": 465.9, "tarjeta": 693.78, "total": 1159.68, "notas": "", "por": "Admin"}, {"fecha": "2026-10-31", "efectivo": 372.74, "tarjeta": 772.97, "total": 1145.71, "notas": "", "por": "Admin"}, {"fecha": "2026-11-01", "efectivo": 430.94, "tarjeta": 599.19, "total": 1030.13, "notas": "", "por": "Admin"}], "proveedores": [{"id": "PR01", "nombre": "Nicolás y Valero", "activo": true, "direccion": "", "tipo": "Comida", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 1, "notas": ""}, {"id": "PR02", "nombre": "Luga Sabores", "activo": true, "direccion": "", "tipo": "Comida", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 2, "notas": ""}, {"id": "PR03", "nombre": "Mercadona", "activo": true, "direccion": "", "tipo": "Comida", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "Compra en tienda", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 3, "notas": ""}, {"id": "PR04", "nombre": "Dialsur", "activo": true, "direccion": "", "tipo": "Comida", "contacto": "", "telefono": "", "whatsapp": "34600000000", "email": "", "canal": "WhatsApp", "diaPedido": "Lunes", "diaReparto": "", "pedidoMinimo": "", "orden": 4, "notas": ""}, {"id": "PR05", "nombre": "Cash Levante", "activo": true, "direccion": "", "tipo": "Comida", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 5, "notas": ""}, {"id": "PR06", "nombre": "Erna", "activo": true, "direccion": "", "tipo": "Comida", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 6, "notas": ""}, {"id": "PR07", "nombre": "Bodegas Villena", "activo": true, "direccion": "", "tipo": "Bebida", "contacto": "", "telefono": "", "whatsapp": "", "email": "pedidos@ejemplo.com", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 7, "notas": ""}, {"id": "PR08", "nombre": "Bodegas Ruiz", "activo": true, "direccion": "Pol. Ind. Ejemplo, nave 4", "tipo": "Bebida", "contacto": "", "telefono": "965 000 000", "whatsapp": "34600000000", "email": "", "canal": "WhatsApp", "diaPedido": "Lunes", "diaReparto": "", "pedidoMinimo": 100, "orden": 8, "notas": ""}, {"id": "PR09", "nombre": "Bodegas Nogueras", "activo": true, "direccion": "", "tipo": "Bebida", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 9, "notas": ""}, {"id": "PR10", "nombre": "Campoluz", "activo": true, "direccion": "", "tipo": "Vino y vermut", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 10, "notas": ""}, {"id": "PR11", "nombre": "Exclusivas Uriarte", "activo": true, "direccion": "", "tipo": "Vino y vermut", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 11, "notas": ""}, {"id": "PR12", "nombre": "Distribuciones Disvalero", "activo": true, "direccion": "", "tipo": "Vino y vermut", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 12, "notas": ""}, {"id": "PR13", "nombre": "Gil Family Estates", "activo": true, "direccion": "", "tipo": "Vino y vermut", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 13, "notas": ""}, {"id": "PR14", "nombre": "Redisa Dibos", "activo": true, "direccion": "", "tipo": "Vino y vermut", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 14, "notas": ""}, {"id": "PR15", "nombre": "Anforae", "activo": true, "direccion": "", "tipo": "Vino y vermut", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 15, "notas": ""}, {"id": "PR16", "nombre": "Primitivo Quiles", "activo": true, "direccion": "", "tipo": "Vino y vermut", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 16, "notas": ""}, {"id": "PR17", "nombre": "Agustina", "activo": true, "direccion": "", "tipo": "Vino y vermut", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 17, "notas": ""}, {"id": "PR18", "nombre": "Jesús Latas", "activo": true, "direccion": "", "tipo": "Comida", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 18, "notas": ""}, {"id": "PR19", "nombre": "Mónica y Miguel Ángel", "activo": true, "direccion": "", "tipo": "Limpieza", "contacto": "", "telefono": "", "whatsapp": "", "email": "", "canal": "", "diaPedido": "", "diaReparto": "", "pedidoMinimo": "", "orden": 19, "notas": ""}], "productos": [{"id": "P001", "nombre": "Pan", "proveedor": "Nicolás y Valero", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 5, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P002", "nombre": "Focaccia", "proveedor": "Nicolás y Valero", "categoria": "Comida", "unidad": "ud", "minimo": 1, "ideal": 5, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 2.86, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P003", "nombre": "Queso picante", "proveedor": "Nicolás y Valero", "categoria": "Comida", "unidad": "ud", "minimo": 3, "ideal": 5, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 10.27, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P004", "nombre": "Pulled pork", "proveedor": "Nicolás y Valero", "categoria": "Comida", "unidad": "ud", "minimo": 1, "ideal": 4, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 2.5, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P005", "nombre": "Cochinita", "proveedor": "Nicolás y Valero", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 4, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 7.41, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P006", "nombre": "Bao negro", "proveedor": "Nicolás y Valero", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 8, "actual": 6, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 8.39, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P007", "nombre": "Coulant blanco", "proveedor": "Nicolás y Valero", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 4, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 4.06, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P008", "nombre": "Jamón", "proveedor": "Nicolás y Valero", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 10, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": 7.86, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P009", "nombre": "Regaña normal", "proveedor": "Luga Sabores", "categoria": "Comida", "unidad": "ud", "minimo": 3, "ideal": 7, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 4.44, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P010", "nombre": "Regaña negra", "proveedor": "Luga Sabores", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 8, "actual": 6, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P011", "nombre": "Lacón", "proveedor": "Luga Sabores", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 4, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P012", "nombre": "Donostiarra", "proveedor": "Luga Sabores", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 8, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 7.58, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P013", "nombre": "Pan feo", "proveedor": "Luga Sabores", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 6, "actual": 6, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 9.97, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P014", "nombre": "Naranjas", "proveedor": "Mercadona", "categoria": "Comida", "unidad": "ud", "minimo": 1, "ideal": 3, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 2.61, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P015", "nombre": "Limones", "proveedor": "Mercadona", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 8, "actual": 2, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 11.41, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P016", "nombre": "Cebollino", "proveedor": "Mercadona", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 5, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 9.68, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P017", "nombre": "Albahaca", "proveedor": "Mercadona", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 5, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 6.49, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P018", "nombre": "Patatas bravas", "proveedor": "Mercadona", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 8, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 6.15, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P019", "nombre": "Provoleta", "proveedor": "Mercadona", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 8, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 4.32, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P020", "nombre": "Mozzarella", "proveedor": "Mercadona", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 4, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 3.46, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P021", "nombre": "Queso tostado", "proveedor": "Mercadona", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 8, "actual": 6, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 7.15, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P022", "nombre": "Pimiento rojo", "proveedor": "Mercadona", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 6, "actual": 5, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 3.04, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P023", "nombre": "Tomates cherry", "proveedor": "Mercadona", "categoria": "Comida", "unidad": "ud", "minimo": 3, "ideal": 5, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 3.1, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P024", "nombre": "Líquido WC", "proveedor": "Mercadona", "categoria": "Limpieza", "unidad": "garrafa", "minimo": 4, "ideal": 6, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 3.61, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P025", "nombre": "Jabón de manos", "proveedor": "Mercadona", "categoria": "Limpieza", "unidad": "garrafa", "minimo": 2, "ideal": 4, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 6.81, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P026", "nombre": "Papas", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 6, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P027", "nombre": "Mejillones", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 3, "ideal": 9, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 9.5, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P028", "nombre": "Berberechos buenos", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 8, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": 7.16, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P029", "nombre": "Hígado de bacalao", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 6, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 8.43, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P030", "nombre": "Ventresca", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 1, "ideal": 5, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 4.23, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P031", "nombre": "Atún", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 8, "actual": 8, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P032", "nombre": "Alcachofas", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 5, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": 10.03, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P033", "nombre": "Pimientos del piquillo", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 8, "actual": 2, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P034", "nombre": "Salsa de trufa", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 3, "ideal": 7, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P035", "nombre": "Queso para nachos", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 6, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 3.97, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P036", "nombre": "Nachos", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 8, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P037", "nombre": "Cebollitas", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 4, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": 11.1, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P038", "nombre": "Pepinillos", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 8, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 10.01, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P039", "nombre": "Piparras", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 3, "ideal": 9, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 11.93, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P040", "nombre": "Mayonesa", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 1, "ideal": 4, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 10.27, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P041", "nombre": "Anchoas", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 3, "ideal": 7, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 11.71, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P042", "nombre": "Palillos finos", "proveedor": "Dialsur", "categoria": "Menaje", "unidad": "paquete", "minimo": 1, "ideal": 4, "actual": 2, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 2.85, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P043", "nombre": "Palillos gordos", "proveedor": "Dialsur", "categoria": "Menaje", "unidad": "paquete", "minimo": 4, "ideal": 7, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": 3.04, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P044", "nombre": "Palillos banderillas", "proveedor": "Dialsur", "categoria": "Menaje", "unidad": "paquete", "minimo": 3, "ideal": 6, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 5.26, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P045", "nombre": "Mermelada de tomate", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 10, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P046", "nombre": "Fantasia", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 7, "actual": 6, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 10.73, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P047", "nombre": "Queso gouda en lonchas", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 4, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P048", "nombre": "Queso cheddar en lonchas", "proveedor": "Dialsur", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 5, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 8.82, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P049", "nombre": "Berberechos", "proveedor": "Cash Levante", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 10, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P050", "nombre": "Navajas", "proveedor": "Cash Levante", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 6, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 2.98, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P051", "nombre": "Izaguirre", "proveedor": "Cash Levante", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 3, "ideal": 5, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P052", "nombre": "Aperol", "proveedor": "Cash Levante", "categoria": "Bebida", "unidad": "caja", "minimo": 1, "ideal": 7, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 15.61, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P053", "nombre": "Ensaladilla", "proveedor": "Erna", "categoria": "Comida", "unidad": "ud", "minimo": 3, "ideal": 6, "actual": 6, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P054", "nombre": "Tortillas", "proveedor": "Erna", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 8, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 5.16, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P055", "nombre": "Boquerones en vinagre", "proveedor": "Erna", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 8, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 3.22, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P056", "nombre": "Ahumados", "proveedor": "Erna", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 6, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P057", "nombre": "Caracoles", "proveedor": "Erna", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 4, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P058", "nombre": "Mejillones", "proveedor": "Erna", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 5, "actual": 5, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 6.21, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P059", "nombre": "Barril normal", "proveedor": "Bodegas Villena", "categoria": "Bebida", "unidad": "caja", "minimo": 2, "ideal": 6, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 14.96, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P060", "nombre": "Barril 1906", "proveedor": "Bodegas Villena", "categoria": "Bebida", "unidad": "caja", "minimo": 1, "ideal": 7, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P061", "nombre": "1/3", "proveedor": "Bodegas Villena", "categoria": "Bebida", "unidad": "caja", "minimo": 1, "ideal": 4, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 20.78, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P062", "nombre": "1/5", "proveedor": "Bodegas Villena", "categoria": "Bebida", "unidad": "caja", "minimo": 2, "ideal": 6, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": 14.49, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P063", "nombre": "Sin 0,0", "proveedor": "Bodegas Villena", "categoria": "Bebida", "unidad": "caja", "minimo": 2, "ideal": 8, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 12.63, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P064", "nombre": "Sin tostada 0,0", "proveedor": "Bodegas Villena", "categoria": "Bebida", "unidad": "caja", "minimo": 2, "ideal": 8, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 19.42, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P065", "nombre": "La Pelirroja", "proveedor": "Bodegas Villena", "categoria": "Bebida", "unidad": "caja", "minimo": 1, "ideal": 4, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 13.41, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P066", "nombre": "Red Vintage", "proveedor": "Bodegas Villena", "categoria": "Bebida", "unidad": "caja", "minimo": 4, "ideal": 10, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 12.1, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P067", "nombre": "Lupia", "proveedor": "Bodegas Villena", "categoria": "Bebida", "unidad": "caja", "minimo": 1, "ideal": 4, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 13.06, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P068", "nombre": "Reposada", "proveedor": "Bodegas Villena", "categoria": "Bebida", "unidad": "caja", "minimo": 2, "ideal": 5, "actual": 2, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 12.52, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P069", "nombre": "Zumo de piña", "proveedor": "Bodegas Villena", "categoria": "Bebida", "unidad": "caja", "minimo": 1, "ideal": 5, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P070", "nombre": "Zumo de melocotón", "proveedor": "Bodegas Villena", "categoria": "Bebida", "unidad": "caja", "minimo": 4, "ideal": 7, "actual": 6, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P071", "nombre": "Agua", "proveedor": "Bodegas Villena", "categoria": "Bebida", "unidad": "caja", "minimo": 1, "ideal": 7, "actual": 7, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P072", "nombre": "Pan sin gluten", "proveedor": "Bodegas Villena", "categoria": "Comida", "unidad": "ud", "minimo": 3, "ideal": 7, "actual": 7, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 10.32, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P073", "nombre": "Papas", "proveedor": "Bodegas Villena", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 8, "actual": 2, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 8.25, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P074", "nombre": "Mejillones al vapor", "proveedor": "Bodegas Villena", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 8, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 5.81, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P075", "nombre": "Tomate de botella", "proveedor": "Bodegas Villena", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 8, "actual": 6, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 6.59, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P076", "nombre": "Panchitos picantes", "proveedor": "Bodegas Villena", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 6, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 5.29, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P077", "nombre": "Olivas rellenas", "proveedor": "Bodegas Villena", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 8, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 3.83, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P078", "nombre": "Lomo de orza", "proveedor": "Bodegas Villena", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 8, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 4.01, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P079", "nombre": "Gambas al ajillo", "proveedor": "Bodegas Villena", "categoria": "Comida", "unidad": "ud", "minimo": 4, "ideal": 6, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 7.87, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P080", "nombre": "Capellán", "proveedor": "Bodegas Villena", "categoria": "Comida", "unidad": "ud", "minimo": 3, "ideal": 5, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 7.86, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P081", "nombre": "Heineken", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 4, "ideal": 7, "actual": 7, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P082", "nombre": "Águila sin filtrar", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 3, "ideal": 6, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P083", "nombre": "Judas", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 4, "ideal": 10, "actual": 10, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P084", "nombre": "Paulaner", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 4, "ideal": 6, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": 19.37, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P085", "nombre": "Radler", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 2, "ideal": 4, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 21.47, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P086", "nombre": "Coca-Cola", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 3, "ideal": 9, "actual": 5, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 15.91, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P087", "nombre": "Coca-Cola Zero", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 2, "ideal": 8, "actual": 2, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P088", "nombre": "Coca-Cola Zero Zero", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 4, "ideal": 6, "actual": 6, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P089", "nombre": "Fanta naranja", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 2, "ideal": 4, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": 18.48, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P090", "nombre": "Fanta limón", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 2, "ideal": 5, "actual": 5, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P091", "nombre": "Aquarius naranja", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 1, "ideal": 7, "actual": 7, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 17.36, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P092", "nombre": "Aquarius limón", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 1, "ideal": 4, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P093", "nombre": "Fuze Tea", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 2, "ideal": 5, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 21.64, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P094", "nombre": "Sprite", "proveedor": "Bodegas Ruiz", "categoria": "Bebida", "unidad": "caja", "minimo": 1, "ideal": 4, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P095", "nombre": "Vermut González Byass", "proveedor": "Bodegas Nogueras", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 2, "ideal": 8, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P096", "nombre": "Bitter Kas", "proveedor": "Bodegas Nogueras", "categoria": "Bebida", "unidad": "caja", "minimo": 4, "ideal": 7, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 14.97, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P097", "nombre": "Schweppes", "proveedor": "Bodegas Nogueras", "categoria": "Bebida", "unidad": "caja", "minimo": 4, "ideal": 10, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P098", "nombre": "Otros", "proveedor": "Bodegas Nogueras", "categoria": "Bebida", "unidad": "caja", "minimo": 2, "ideal": 4, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P099", "nombre": "Ribera", "proveedor": "Campoluz", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 2, "ideal": 6, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P100", "nombre": "Rioja", "proveedor": "Campoluz", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 2, "ideal": 8, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 13.55, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P101", "nombre": "De la zona", "proveedor": "Campoluz", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 3, "ideal": 9, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 7.84, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P102", "nombre": "Verdejo", "proveedor": "Campoluz", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 2, "ideal": 4, "actual": 2, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 13.34, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P103", "nombre": "Godello", "proveedor": "Campoluz", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 1, "ideal": 5, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 13.99, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P104", "nombre": "Otros", "proveedor": "Campoluz", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 4, "ideal": 6, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P105", "nombre": "José Pariente", "proveedor": "Exclusivas Uriarte", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 2, "ideal": 4, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P106", "nombre": "Carmelo Rodero", "proveedor": "Exclusivas Uriarte", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 2, "ideal": 6, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P107", "nombre": "Tarima Hill / Triga", "proveedor": "Distribuciones Disvalero", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 3, "ideal": 5, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P108", "nombre": "Triga", "proveedor": "Distribuciones Disvalero", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 3, "ideal": 6, "actual": 6, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P109", "nombre": "Juan Gil", "proveedor": "Gil Family Estates", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 3, "ideal": 9, "actual": 5, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P110", "nombre": "Laya / Atalaya / Alaya / Vigía", "proveedor": "Gil Family Estates", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 3, "ideal": 5, "actual": 5, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 8.09, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P111", "nombre": "Otros", "proveedor": "Gil Family Estates", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 2, "ideal": 6, "actual": 6, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 7.71, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P112", "nombre": "Vermut Padró", "proveedor": "Redisa Dibos", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 4, "ideal": 10, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 6.87, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P113", "nombre": "Vermut Mirra", "proveedor": "Redisa Dibos", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 3, "ideal": 6, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 9.93, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P114", "nombre": "Godeval", "proveedor": "Redisa Dibos", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 2, "ideal": 4, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 7.15, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P115", "nombre": "Otros", "proveedor": "Redisa Dibos", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 2, "ideal": 5, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 9.72, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P116", "nombre": "Sangarida", "proveedor": "Anforae", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 3, "ideal": 7, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 13.71, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P117", "nombre": "Pepe Mendoza", "proveedor": "Anforae", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 2, "ideal": 5, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 10.81, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P118", "nombre": "Vermut", "proveedor": "Primitivo Quiles", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 3, "ideal": 7, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P119", "nombre": "Mistela", "proveedor": "Primitivo Quiles", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 1, "ideal": 4, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P120", "nombre": "Vermut Agustina", "proveedor": "Agustina", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 3, "ideal": 9, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P121", "nombre": "Ribera", "proveedor": "Jesús Latas", "categoria": "Vino y vermut", "unidad": "botella", "minimo": 4, "ideal": 10, "actual": 5, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 6.37, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P122", "nombre": "Boquerón frito", "proveedor": "Jesús Latas", "categoria": "Comida", "unidad": "ud", "minimo": 1, "ideal": 7, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P123", "nombre": "Anchoas buenas", "proveedor": "Jesús Latas", "categoria": "Comida", "unidad": "ud", "minimo": 2, "ideal": 4, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 7.28, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P124", "nombre": "Navajas en aceite", "proveedor": "Jesús Latas", "categoria": "Comida", "unidad": "ud", "minimo": 3, "ideal": 5, "actual": 0, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 7.83, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P125", "nombre": "Friegasuelos", "proveedor": "Mónica y Miguel Ángel", "categoria": "Limpieza", "unidad": "garrafa", "minimo": 3, "ideal": 7, "actual": 1, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 8.98, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P126", "nombre": "Abrillantador", "proveedor": "Mónica y Miguel Ángel", "categoria": "Limpieza", "unidad": "garrafa", "minimo": 2, "ideal": 6, "actual": 6, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 6.28, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P127", "nombre": "Para el lavavajillas", "proveedor": "Mónica y Miguel Ángel", "categoria": "Limpieza", "unidad": "garrafa", "minimo": 1, "ideal": 7, "actual": 7, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Lucía", "activo": true, "precio": 5.99, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P128", "nombre": "Líquido azul", "proveedor": "Mónica y Miguel Ángel", "categoria": "Limpieza", "unidad": "garrafa", "minimo": 3, "ideal": 5, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 5.22, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P129", "nombre": "Líquido rosa aseos", "proveedor": "Mónica y Miguel Ángel", "categoria": "Limpieza", "unidad": "garrafa", "minimo": 3, "ideal": 5, "actual": 5, "aPedir": "", "ultimaCuenta": "2026-11-01T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 7.1, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P130", "nombre": "Bolsas pequeñas", "proveedor": "Mónica y Miguel Ángel", "categoria": "Menaje", "unidad": "paquete", "minimo": 2, "ideal": 4, "actual": "", "aPedir": "", "ultimaCuenta": "", "contadoPor": "", "activo": true, "precio": 5.38, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P131", "nombre": "Bolsas grandes", "proveedor": "Mónica y Miguel Ángel", "categoria": "Menaje", "unidad": "paquete", "minimo": 1, "ideal": 4, "actual": 2, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P132", "nombre": "Cheminé", "proveedor": "Mónica y Miguel Ángel", "categoria": "Menaje", "unidad": "paquete", "minimo": 2, "ideal": 5, "actual": 3, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": "", "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P133", "nombre": "Papel de aseo", "proveedor": "Mónica y Miguel Ángel", "categoria": "Limpieza", "unidad": "garrafa", "minimo": 2, "ideal": 4, "actual": 4, "aPedir": "", "ultimaCuenta": "2026-10-25T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 4.34, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P134", "nombre": "Papel de manos", "proveedor": "Mónica y Miguel Ángel", "categoria": "Limpieza", "unidad": "garrafa", "minimo": 3, "ideal": 5, "actual": 5, "aPedir": "", "ultimaCuenta": "2026-11-02T12:00:00Z", "contadoPor": "Marta", "activo": true, "precio": 3.14, "precioFecha": "", "ultimoPedido": "", "notas": ""}, {"id": "P135", "nombre": "Lejía", "proveedor": "Mónica y Miguel Ángel", "categoria": "Limpieza", "unidad": "garrafa", "minimo": 4, "ideal": 7, "actual": 5, "aPedir": "", "ultimaCuenta": "2026-11-03T12:00:00Z", "contadoPor": "Andrea", "activo": true, "precio": 5.36, "precioFecha": "", "ultimoPedido": "", "notas": ""}], "config": {"MENSAJE_PEDIDO": "Hola{contacto}, somos El Otro Lado. Os pasamos el pedido:\n{lineas}\n¡Gracias!", "ASUNTO_EMAIL": "Pedido El Otro Lado - {fecha}"}};
+(function(){
+  const D = window.DEMO_DATOS;
+  const U = [{nombre:'Admin',pin:'123456',rol:'Administrador',activo:true},{nombre:'Lucía',pin:'1111',rol:'Básico',activo:true},
+             {nombre:'Marta',pin:'2222',rol:'Básico',activo:true},{nombre:'Andrea',pin:'3333',rol:'Básico',activo:true}];
+  const num = v => (v === '' || v == null || isNaN(Number(v))) ? '' : Number(v);
+  const norm = s => String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  function auth(c, admin){ const u = U.find(x => c && norm(x.nombre) === norm(c.nombre));
+    if (!u || !u.activo || u.pin !== String(c.pin)) throw new Error('SESION: Nombre o PIN incorrectos.');
+    if (admin && u.rol !== 'Administrador') throw new Error('Solo un administrador puede hacer esto.'); return {nombre:u.nombre, rol:u.rol}; }
+  D.pedidos = D.pedidos || []; D.caja = D.caja || [];
+  function datos(u){ const x = JSON.parse(JSON.stringify(D)); x.usuario = u;
+    x.pedidos = x.pedidos.filter(p => p.estado === 'Pendiente' || p.estado === 'Parcial');
+    if (u.rol === 'Administrador') x.usuarios = U.map(v => ({nombre:v.nombre, rol:v.rol, activo:v.activo, tienePin:!!v.pin}));
+    else { x.productos = x.productos.filter(p => p.activo !== false).map(p => { delete p.precio; return p; }); delete x.config; delete x.caja; }
+    return x; }
+  const api = {
+    usuariosPublicos(){ return U.filter(u => u.activo).map(u => ({ nombre: u.nombre, largo: String(u.pin).length })); },
+    entrar(c){ let u;
+      if (c && c.nombre) u = auth(c);
+      else { const q = U.filter(x => x.activo && x.pin === String(c && c.pin)); if (q.length !== 1) throw new Error('SESION: PIN incorrecto.'); u = {nombre:q[0].nombre, rol:q[0].rol}; }
+      return {usuario:u, datos:datos(u)}; },
+    obtenerDatos(c){ return datos(auth(c)); },
+    guardarRecuento(c, pl){ const u = auth(c), now = new Date().toISOString();
+      pl.items.forEach(it => { const p = D.productos.find(x => x.id === it.id); if (!p) return;
+        if (it.actual !== '') { p.actual = num(it.actual); p.ultimaCuenta = now; p.contadoPor = u.nombre; }
+        if ('aPedir' in it) p.aPedir = num(it.aPedir); }); return datos(u); },
+    guardarCantidades(c, pl){ const u = auth(c, true); pl.items.forEach(it => { const p = D.productos.find(x => x.id === it.id); if (p) p.aPedir = num(it.aPedir); }); return datos(u); },
+    marcarPedidoHecho(c, pl){ const u = auth(c, true), now = new Date().toISOString();
+      const ped = { num: 'D' + Date.now(), proveedor: pl.proveedor, fecha: now, hechoPor: u.nombre, estado: 'Pendiente', lineas: [] };
+      pl.items.forEach(it => { const p = D.productos.find(x => x.id === it.id); if (p){ p.aPedir = ''; p.ultimoPedido = now; ped.lineas.push({ id: p.id, producto: p.nombre, unidad: p.unidad, cantidad: Number(it.cantidad), recibido: 0 }); } });
+      if (ped.lineas.length) D.pedidos.push(ped); return datos(u); },
+    recepcionarPedido(c, pl){ const u = auth(c); if (pl.cerrar && u.rol !== 'Administrador') throw new Error('Solo un administrador puede cerrar un pedido con faltas.');
+      const ped = D.pedidos.find(p => p.num === pl.num && (p.estado === 'Pendiente' || p.estado === 'Parcial')); if (!ped) throw new Error('Este pedido ya no está pendiente.');
+      let algo = false; (pl.lineas || []).forEach(l => { const ln = ped.lineas.find(x => x.id === l.id); const q = Number(l.cantidad) || 0; if (ln && q > 0){ algo = true; ln.recibido += q;
+        const p = D.productos.find(x => x.id === l.id); if (p){ p.actual = (p.actual === '' ? 0 : p.actual) + q; p.ultimaCuenta = new Date().toISOString(); p.contadoPor = u.nombre; } } });
+      const completo = ped.lineas.every(l => l.recibido >= l.cantidad);
+      if (!algo && !completo && !pl.cerrar) throw new Error('No has marcado nada como recibido.');
+      ped.estado = completo ? 'Completo' : pl.cerrar ? 'Cerrado con faltas' : 'Parcial'; return datos(u); },
+    guardarCaja(c, pl){ const u = auth(c, true); const i = D.caja.findIndex(x => x.fecha === pl.fecha);
+      if (pl.efectivo === '' && pl.tarjeta === ''){ if (i >= 0) D.caja.splice(i, 1); return datos(u); }
+      const ef = Number(pl.efectivo) || 0, ta = Number(pl.tarjeta) || 0;
+      const r = { fecha: pl.fecha, efectivo: ef, tarjeta: ta, total: Math.round((ef + ta) * 100) / 100, notas: pl.notas || '', por: u.nombre };
+      if (i >= 0) D.caja[i] = r; else D.caja.push(r); return datos(u); },
+    actualizarPrecio(c, pl){ const u = auth(c, true); const p = D.productos.find(x => x.id === pl.id); if (p){ p.precio = num(pl.precio); p.precioFecha = new Date().toISOString(); } return datos(u); },
+    guardarPdf(c){ auth(c, true); return { url: '', nombre: 'demo.pdf' }; },
+    guardarUsuario(c, o){ const yo = auth(c, true);
+      if (!o.nombre) throw new Error('Falta el nombre.');
+      const largo = o.rol === 'Administrador' ? 6 : 4;
+      if (o.pin && !new RegExp('^\\d{' + largo + '}$').test(o.pin)) throw new Error('El PIN tiene que tener ' + largo + ' números.');
+      if (U.some(x => norm(x.nombre) === norm(o.nombre) && norm(x.nombre) !== norm(o.original))) throw new Error('Ya existe un usuario con ese nombre.');
+      const restantes = U.filter(x => x.rol === 'Administrador' && x.activo && norm(x.nombre) !== norm(o.original)).length;
+      if (!restantes && (o.rol !== 'Administrador' || o.activo === false)) throw new Error('Tiene que quedar al menos un administrador activo.');
+      let u = U.find(x => norm(x.nombre) === norm(o.original));
+      if (!u){ if (!o.pin) throw new Error('Pon un PIN de ' + largo + ' números para el usuario nuevo.'); u = {}; U.push(u); }
+      Object.assign(u, {nombre:o.nombre, rol:o.rol, activo:o.activo !== false}); if (o.pin) u.pin = o.pin;
+      const soyYo = norm(o.original) === norm(yo.nombre);
+      return { datos: datos(soyYo ? {nombre:u.nombre, rol:u.rol} : yo), cred: soyYo ? {nombre:u.nombre, pin:u.pin} : null }; },
+    guardarProveedor(c, o){ const u = auth(c, true);
+      if (!o.nombre) throw new Error('Falta el nombre del proveedor.');
+      if (D.proveedores.some(x => norm(x.nombre) === norm(o.nombre) && x.id !== o.id)) throw new Error('Ya existe un proveedor con ese nombre.');
+      let p = D.proveedores.find(x => x.id === o.id);
+      if (!p){ p = {id:'PR' + String(D.proveedores.length + 1).padStart(2,'0')}; D.proveedores.push(p); }
+      const antes = p.nombre;
+      Object.assign(p, o, {id:p.id, whatsapp:String(o.whatsapp||'').replace(/\D/g,''), pedidoMinimo:num(o.pedidoMinimo), orden:num(o.orden) === '' ? D.proveedores.length : num(o.orden)});
+      if (antes && antes !== p.nombre) D.productos.forEach(x => { if (x.proveedor === antes) x.proveedor = p.nombre; });
+      D.proveedores.sort((a,b) => (a.orden||999) - (b.orden||999)); return datos(u); },
+    eliminarProducto(c, o){ const u = auth(c, true); const i = D.productos.findIndex(x => x.id === o.id); if (i < 0) throw new Error('Ese producto ya no existe.');
+      if (D.pedidos.some(p => (p.estado === 'Pendiente' || p.estado === 'Parcial') && p.lineas.some(l => l.id === o.id))) throw new Error('No se puede eliminar: está en un pedido pendiente de recibir. Recíbelo o ciérralo antes.');
+      D.productos.splice(i, 1); return datos(u); },
+    eliminarProveedor(c, o){ const u = auth(c, true); const pv = D.proveedores.find(x => x.id === o.id); if (!pv) throw new Error('Ese proveedor ya no existe.');
+      if (D.pedidos.some(p => (p.estado === 'Pendiente' || p.estado === 'Parcial') && p.proveedor === pv.nombre)) throw new Error('No se puede eliminar: ' + pv.nombre + ' tiene un pedido pendiente de recibir. Recíbelo o ciérralo antes.');
+      D.productos = D.productos.filter(x => x.proveedor !== pv.nombre); D.proveedores = D.proveedores.filter(x => x !== pv); return datos(u); },
+    guardarProducto(c, o){ const u = auth(c, true);
+      if (!o.nombre) throw new Error('Falta el nombre del producto.');
+      let p = D.productos.find(x => x.id === o.id);
+      if (!p){ p = {id:'P' + String(D.productos.length + 1).padStart(3,'0'), actual:'', aPedir:'', ultimaCuenta:'', contadoPor:'', precioFecha:'', ultimoPedido:''}; D.productos.push(p); }
+      Object.assign(p, o, {id:p.id}); return datos(u); }
+  };
+  function runner(ok, ko){
+    return new Proxy({}, { get(_, k){
+      if (k === 'withSuccessHandler') return f => runner(f, ko);
+      if (k === 'withFailureHandler') return f => runner(ok, f);
+      return (...a) => setTimeout(() => { try { ok && ok(api[k](...a)); } catch(e){ ko && ko(e); } }, 200);
+    }});
+  }
+  window.google = { script: { run: runner() } };
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script>
+const LOGO = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEANgA2AAD/2wBDAAcFBQYFBAcGBgYIBwcICxILCwoKCxYPEA0SGhYbGhkWGRgcICgiHB4mHhgZIzAkJiorLS4tGyIyNTEsNSgsLSz/2wBDAQcICAsJCxULCxUsHRkdLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCz/wAARCAKAAoADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDxGiiigoKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAorT8PNpC65AdcWVtP8AmEgizu6HHT3xXrOk/DrwJr9qbnS7y4uYgedk/K+xUjI/GolJR3LjFy2PE6K94f4NeGXxiS/TH92ZefzWmf8ACl/DX/PxqX/f1P8A4ip9rEr2Ujwqivdf+FL+Gv8An41L/v6n/wARR/wpfw1/z8al/wB/U/8AiKPaxD2UjwqiveU+DfhhVwXvnPqZh/RaZcfCbwhaRGW5nuYIwcb5LkKPzIo9rEPZSPCaK9l/4Qf4bbtv9vQ59P7RjrQt/hP4PvIvMtp7idOm6O5DD8wKftEL2bPCqK97/wCFO+F/+n3/AL/D/CpI/hF4URcNb3Ln1ac5/TFL2sR+ykeAUV9A/wDCpPCf/PpP/wB/2rxXxXpsOkeLNRsLdGSGCYqisckL25qozUtiZQcdzIoortPBlp4J1CyNt4huJrW/M3ySBiqFMDAJwQOc8nHbmqbsSlc4uivdz8HfC80atHLf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FABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAH/2Q==";
+document.documentElement.style.setProperty('--logo', `url("${LOGO}")`);
+const LISTAS = {
+  categorias: ['Comida','Bebida','Vino y vermut','Limpieza','Menaje','Otros'],
+  unidades: ['ud','caja','pack','botella','barril','kg','g','l','bolsa','bandeja','bote','lata','garrafa','rollo','paquete'],
+  canales: ['WhatsApp','Email','Teléfono','Comercial (visita)','Web','Compra en tienda'],
+  dias: ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo','Varios días','Cualquier día']
+};
+const SECCIONES = {
+  almacen: { titulo: 'Almacén', admin: false },
+  pedido: { titulo: 'Pedido', admin: true },
+  precios: { titulo: 'Precios', admin: true },
+  recepcion: { titulo: 'Recepción', admin: false },
+  caja: { titulo: 'Caja', admin: true },
+  admin: { titulo: 'Administración', admin: true }
+};
+
+/* ===================== Estado ===================== */
+const S = {
+  pantalla: 'cargando', cred: null, usuario: null, datos: null, nombres: [],
+  login: { nombre: '', pin: '', error: '' },
+  borrador: {}, cantidades: {}, extra: {}, abierto: null, recep: null, recepConfirmar: false,
+  caja: { mes: null, sel: null },
+  filtro: { q: '', prov: '', modo: 'todos' },
+  verTodo: false, pdfTodos: false, confirmar: '', guardando: false,
+  adminTab: 'usuarios'
+};
+const ls = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
+  set(k, v){ try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+// La sesión vive solo en memoria: cada vez que se abre la app pide usuario y PIN.
+try { localStorage.removeItem('eol_cred'); } catch(e){}
+const esAdmin = () => S.usuario && S.usuario.rol === 'Administrador';
+
+/* ===================== Servidor ===================== */
+// Dentro de Google se usa google.script.run. Si la pantalla está alojada en otra web,
+// se llama al mismo script por POST sin la sesión de Google (API_URL).
+const API_URL = '__API_URL__';
+function llamar(fn, ...args){
+  if (window.google && google.script && google.script.run){
+    return new Promise((res, rej) => {
+      google.script.run.withSuccessHandler(res).withFailureHandler(e => rej(e && e.message ? e : new Error(String(e))))[fn](...args);
+    });
+  }
+  return fetch(API_URL, { method: 'POST', credentials: 'omit', redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, args }) })
+    .then(r => { if (!r.ok) throw new Error('No se pudo conectar'); return r.json(); })
+    .then(j => { if (!j.ok) throw new Error(j.error); return j.r; });
+}
+/* Llamada con usuario y PIN; si la sesión no vale, vuelve a la pantalla de entrada */
+async function server(fn, ...args){
+  try { return await llamar(fn, S.cred, ...args); }
+  catch(e){
+    if (String(e.message).includes('SESION:')){ salir(e.message.replace(/^.*SESION:\s*/, '')); throw new Error('Sesión caducada'); }
+    throw new Error(String(e.message).replace(/^Error:\s*/, '').replace(/^Exception:\s*/, ''));
+  }
+}
+function setSync(t){ const el = document.getElementById('sync'); if (el) el.textContent = t; }
+
+async function arrancar(){ await irAEntrar(); }
+const claveBorrador = () => 'eol_borrador_' + sinAcentos(S.usuario ? S.usuario.nombre : '');
+async function irAEntrar(msg){
+  S.pantalla = 'entrar'; S.login = { pin: '', error: msg || '' };
+  render();
+}
+function salir(msg){
+  S.cred = null; S.usuario = null; S.datos = null; S.borrador = {}; S.cantidades = {}; S.recep = null;
+  document.getElementById('modal').innerHTML = '';
+  irAEntrar(msg);
+}
+
+/* ===================== Utilidades ===================== */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = v => (v === '' || v === null || v === undefined || isNaN(Number(String(v).replace(',','.')))) ? '' : Number(String(v).replace(',','.'));
+const eur = n => n === '' || n === null || n === undefined ? '' : n.toLocaleString('es-ES', {style:'currency', currency:'EUR'});
+const fmtN = n => n === '' ? '' : (Math.round(n*100)/100).toLocaleString('es-ES');
+const sinAcentos = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+function hace(iso){
+  if (!iso) return '';
+  const d = new Date(iso), dias = Math.floor((Date.now() - d) / 864e5);
+  if (dias <= 0) return 'hoy ' + d.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
+  if (dias === 1) return 'ayer';
+  if (dias < 7) return 'hace ' + dias + ' días';
+  return d.toLocaleDateString('es-ES', {day:'numeric', month:'short'});
+}
+const fecha = iso => iso ? new Date(iso).toLocaleDateString('es-ES', {day:'numeric', month:'short'}) : '';
+function toast(t){
+  const el = document.getElementById('toast'); el.textContent = t; el.hidden = false;
+  clearTimeout(toast._t); toast._t = setTimeout(() => el.hidden = true, 2600);
+}
+const productosActivos = () => S.datos.productos.filter(p => p.activo !== false && provActivo(p.proveedor));
+const provActivo = n => { const p = S.datos.proveedores.find(x => x.nombre === n); return !p || p.activo !== false; };
+const provPorNombre = n => S.datos.proveedores.find(p => p.nombre === n) || { nombre: n };
+const alfa = (a, b) => String(a || '').localeCompare(String(b || ''), 'es', { sensitivity: 'base', numeric: true });
+/* Proveedores y productos siempre por orden alfabético (se aplica a cada dato nuevo que llega del servidor) */
+function ordenarDatos(d){
+  if (!d || d._ordenado) return;
+  (d.proveedores || []).sort((a, b) => alfa(a.nombre, b.nombre));
+  (d.productos || []).sort((a, b) => alfa(a.nombre, b.nombre));
+  (d.pedidos || []).forEach(p => (p.lineas || []).sort((a, b) => alfa(a.producto, b.producto)));
+  Object.defineProperty(d, '_ordenado', { value: true });
+}
+function grupos(lista){
+  const m = new Map();
+  lista.forEach(p => { if (!m.has(p.proveedor)) m.set(p.proveedor, []); m.get(p.proveedor).push(p); });
+  m.forEach(ps => ps.sort((a, b) => alfa(a.nombre, b.nombre)));
+  return [...m.entries()].sort((a, b) => alfa(a[0], b[0]));
+}
+function opciones(lista, actual, vacio){
+  const l = actual && !lista.includes(actual) ? [actual, ...lista] : lista;
+  return (vacio !== undefined ? `<option value="">${esc(vacio)}</option>` : '') + l.map(v => `<option value="${esc(v)}" ${v === actual ? 'selected' : ''}>${esc(v)}</option>`).join('');
+}
+
+/* Lógica de stock */
+function actualDe(p){ const b = S.borrador[p.id]; return (b && b.actual !== undefined && b.actual !== '') ? num(b.actual) : p.actual; }
+function sugerido(p){
+  const a = actualDe(p);
+  if (a === '' || p.minimo === '' || p.ideal === '') return '';
+  return a <= p.minimo ? Math.max(p.ideal - a, 0) : 0;
+}
+function manualDe(p){ const b = S.borrador[p.id]; return (b && 'aPedir' in b) ? num(b.aPedir) : p.aPedir; }
+function aPedir(p){
+  if (p.id in S.cantidades) return num(S.cantidades[p.id]) || 0;
+  const m = manualDe(p); if (m !== '') return m;
+  return sugerido(p) || 0;
+}
+const yaPedido = p => p.ultimoPedido && (!p.ultimaCuenta || new Date(p.ultimoPedido) >= new Date(p.ultimaCuenta)) && !S.borrador[p.id];
+const tienePrecio = p => p.precio !== '' && p.precio !== undefined && p.precio !== null;
+
+/* ===================== Render principal ===================== */
+function render(){
+  const app = document.getElementById('app');
+  ordenarDatos(S.datos);
+  setTimeout(mirarArriba, 0);
+  if (S.pantalla === 'entrar') return vistaEntrar(app);
+  if (S.pantalla === 'inicio') return vistaInicio(app);
+  if (!S.datos) return;
+  const sec = SECCIONES[S.pantalla];
+  if (!sec || (sec.admin && !esAdmin())){ S.pantalla = 'inicio'; return render(); }
+  if (!document.getElementById('vista')){
+    app.innerHTML = `<header class="top"><div class="wrap">
+        <button class="volver" type="button" data-ir="inicio" aria-label="Volver al inicio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 5l-7 7 7 7"/></svg><img alt="" src="${LOGO}"></button>
+        <div class="titulo" id="titulo"></div>
+        <span class="sync" id="sync"></span>
+        <button class="quien" id="btnQuien" type="button"></button>
+      </div></header>
+      <main class="wrap" id="vista"></main>
+      <div class="accion" id="accion" hidden><div class="wrap" id="accionWrap"></div></div>`;
+  }
+  document.getElementById('titulo').textContent = sec.titulo;
+  document.getElementById('btnQuien').textContent = S.usuario.nombre;
+  ({almacen: vistaAlmacen, recepcion: vistaRecepcion, pedido: vistaPedido, precios: vistaPrecios, caja: vistaCaja, admin: vistaAdmin})[S.pantalla]();
+}
+function ir(p){ S.pantalla = p; S.confirmar = ''; S.recep = null; S.recepConfirmar = false; S.filtro = { q: '', prov: '', modo: 'todos' }; document.getElementById('app').innerHTML = ''; window.scrollTo(0, 0); render(); }
+
+/* ---------- ENTRAR ---------- */
+// Solo PIN: el PIN dice quién eres. 4 cifras los básicos (botón Entrar), 6 los administradores (entra solo).
+const PIN_MAX = 6;
+function vistaEntrar(app){
+  const L = S.login;
+  const n = L.pin.length;
+  app.innerHTML = `<section class="portada"><div class="wrap">
+      <p class="saludo">Hola<small>Escribe tu PIN</small></p>
+      <div class="puntos ${L.error ? 'agita' : ''}" aria-label="${n} números escritos">${Array.from({length: Math.max(4, n)}, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</div>
+      <p class="error" role="alert">${esc(L.error)}</p>
+      <div class="teclado">${[1,2,3,4,5,6,7,8,9].map(d => `<button type="button" data-tecla="${d}">${d}</button>`).join('')}
+        <button type="button" data-tecla="borrar" aria-label="Borrar">⌫</button><button type="button" data-tecla="0">0</button><button type="button" data-tecla="ok" class="tecla-ok" ${n < 4 ? 'disabled' : ''}>Entrar</button></div>
+      ${L.enviando ? '<p class="muted" style="text-align:center;margin-top:12px">Entrando…</p>' : ''}
+  </div></section>`;
+}
+async function tecla(t){
+  const L = S.login;
+  if (L.enviando) return;
+  if (t === 'borrar'){ L.pin = L.pin.slice(0, -1); L.error = ''; return render(); }
+  if (t !== 'ok'){
+    if (L.pin.length >= PIN_MAX) return;
+    L.pin += t; L.error = ''; render();
+    if (L.pin.length < PIN_MAX) return;     // con 6 cifras entra solo
+  }
+  if (L.pin.length < 4) return;
+  const pin = L.pin;
+  L.enviando = true; render();
+  try {
+    const r = await llamar('entrar', { pin });
+    L.enviando = false;
+    S.cred = { nombre: r.usuario.nombre, pin };
+    S.usuario = r.usuario; S.datos = r.datos; S.borrador = ls.get(claveBorrador(), {}); S.pantalla = 'inicio'; render();
+  } catch(e){
+    L.enviando = false;
+    const m = String(e.message);
+    L.pin = ''; L.error = m.includes('SESION:') ? m.replace(/^.*SESION:\s*/, '') : 'No se pudo conectar'; render();
+  }
+}
+
+/* ---------- INICIO ---------- */
+function vistaInicio(app){
+  const activos = productosActivos();
+  const porPedir = activos.filter(p => aPedir(p) > 0).length;
+  const sinContar = activos.filter(p => !p.ultimaCuenta || (Date.now() - new Date(p.ultimaCuenta)) > 7*864e5).length;
+  const pend = Object.keys(S.borrador).length;
+  const conPrecio = activos.filter(tienePrecio).length;
+  const nPed = (S.datos.pedidos || []).length;
+  const cajaHoy = (S.datos.caja || []).find(c => c.fecha === ymd(new Date()));
+  const h = new Date().getHours();
+  const saludo = h < 14 ? 'Buenos días' : h < 21 ? 'Buenas tardes' : 'Buenas noches';
+  app.innerHTML = `<section class="portada inicio"><div class="logo-top" role="img" aria-label="El Otro Lado · Gastro Vermutería"></div><div class="wrap">
+    <p class="saludo">${saludo}, ${esc(S.usuario.nombre)}<small>${esAdmin() ? 'Administrador' : 'Almacén'}</small></p>
+    <nav class="menu" aria-label="Secciones">
+      <button type="button" class="prin" data-ir="almacen"><b>ALMACÉN</b><span>${pend ? pend + ' sin guardar' : sinContar ? sinContar + ' sin contar esta semana' : 'Todo contado'}</span></button>
+      <button type="button" data-ir="recepcion"><b>RECEPCIÓN</b><span>${nPed ? nPed + (nPed === 1 ? ' pedido por recibir' : ' pedidos por recibir') : 'Nada por recibir'}</span></button>
+      ${esAdmin() ? `
+      <button type="button" data-ir="pedido"><b>PEDIDO</b><span>${porPedir ? porPedir + ' productos por pedir' : 'Nada pendiente'}</span></button>
+      <button type="button" data-ir="precios"><b>PRECIOS</b><span>${conPrecio} de ${activos.length} con precio</span></button>
+      <button type="button" data-ir="caja"><b>CAJA</b><span>${cajaHoy ? 'Hoy: ' + eur(cajaHoy.total) : 'Hoy sin apuntar'}</span></button>
+      <button type="button" data-ir="admin"><b>ADMINISTRACIÓN</b><span>Usuarios y altas</span></button>` : ''}
+    </nav>
+    <button type="button" class="salir" data-salir>Salir (cambiar de usuario)</button>
+  </div></section>`;
+}
+
+/* ---------- Filtros comunes ---------- */
+function filtrosHTML(conModos, conInactivos){
+  const provs = S.datos.proveedores.filter(p => conInactivos || p.activo !== false).map(p => `<option value="${esc(p.nombre)}" ${S.filtro.prov === p.nombre ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('');
+  const modos = conModos ? [['todos','Todo'],['pedir','Por pedir'],['sincontar','Sin contar esta semana']]
+    .map(([k, t]) => `<button type="button" class="chip" data-modo="${k}" aria-pressed="${S.filtro.modo === k}">${t}</button>`).join('') : '';
+  return `<div class="filtros">
+    <input class="buscar" id="q" type="search" placeholder="Buscar producto…" value="${esc(S.filtro.q)}" autocomplete="off">
+    <div class="fila-filtros"><select class="sel" id="fprov" aria-label="Proveedor"><option value="">Todos los proveedores</option>${provs}</select>${modos}</div>
+  </div>`;
+}
+function filtrar(lista){
+  const q = sinAcentos(S.filtro.q.trim());
+  return lista.filter(p => {
+    if (S.filtro.prov && p.proveedor !== S.filtro.prov) return false;
+    if (q && !sinAcentos(p.nombre + ' ' + p.proveedor).includes(q)) return false;
+    if (S.pantalla === 'almacen' && S.filtro.modo === 'pedir' && !(aPedir(p) > 0)) return false;
+    if (S.pantalla === 'almacen' && S.filtro.modo === 'sincontar' && p.ultimaCuenta && (Date.now() - new Date(p.ultimaCuenta)) < 7*864e5) return false;
+    return true;
+  });
+}
+
+/* ---------- ALMACÉN ---------- */
+function estadoHTML(p){
+  if (yaPedido(p)) return `<span class="pill pedido">Pedido ${fecha(p.ultimoPedido)}</span>`;
+  const n = aPedir(p);
+  if (n > 0) return `<span class="pill pedir">Pedir ${fmtN(n)}</span>`;
+  if (p.minimo === '' || p.ideal === '') return manualDe(p) === '' ? `<span class="pill nada">Sin mínimo</span>` : '';
+  if (actualDe(p) === '') return `<span class="pill nada">Sin contar</span>`;
+  return `<span class="pill ok">Bien</span>`;
+}
+function filaAlmacen(p){
+  const b = S.borrador[p.id] || {};
+  const val = b.actual !== undefined ? b.actual : '';
+  const ph = p.actual !== '' ? fmtN(p.actual) : '–';
+  const quien = p.ultimaCuenta ? `${hace(p.ultimaCuenta)}${p.contadoPor ? ' · ' + esc(p.contadoPor) : ''}` : 'nunca contado';
+  const abierto = S.abierto === p.id;
+  return `<div class="prod ${S.borrador[p.id] ? 'cambiado' : ''}" data-id="${esc(p.id)}">
+    <div class="nom">${esc(p.nombre)}</div>
+    <div class="paso">
+      <button type="button" data-paso="-1" aria-label="Uno menos">−</button>
+      <input type="text" inputmode="decimal" value="${esc(val)}" placeholder="${ph}" aria-label="Cantidad de ${esc(p.nombre)}" data-campo="actual">
+      <button type="button" data-paso="1" aria-label="Uno más">+</button>
+    </div>
+    <div class="meta">${p.unidad ? esc(p.unidad) + ' ·' : ''} ${quien} ${estadoHTML(p)} <button type="button" class="linkbtn" data-abrir>${abierto ? 'cerrar' : 'más'}</button></div>
+    ${abierto ? `<div class="mas">
+      <label>Pedir a mano <input type="text" inputmode="decimal" data-campo="aPedir" value="${esc(manualDe(p))}" placeholder="${esc(sugerido(p) === '' ? '' : sugerido(p))}"></label>
+      <span>Mín. ${p.minimo === '' ? '–' : fmtN(p.minimo)} · Ideal ${p.ideal === '' ? '–' : fmtN(p.ideal)}</span>
+      ${p.notas ? `<span>${esc(p.notas)}</span>` : ''}
+    </div>` : ''}
+  </div>`;
+}
+function barraAlmacen(){
+  const pend = Object.keys(S.borrador).length;
+  barraAccion(pend ? `<button class="btn" id="btnGuardar" type="button" ${S.guardando ? 'disabled' : ''}>${S.guardando ? 'Guardando…' : `Guardar recuento (${pend})`}</button>` : '');
+}
+function vistaAlmacen(){
+  const gs = grupos(filtrar(productosActivos()));
+  document.getElementById('vista').innerHTML = `
+    <h1>Recuento de almacén</h1>
+    <p class="sub">Apunta cuánto queda de cada cosa. Si no lo has contado, déjalo vacío.</p>
+    ${filtrosHTML(true)}
+    ${gs.length ? gs.map(([prov, ps]) => { const np = ps.filter(p => aPedir(p) > 0).length;
+      return `<section class="grupo"><div class="grupo-cab"><h2>${esc(prov)}</h2><span>${np ? np + ' por pedir · ' : ''}${ps.length} productos</span></div>${ps.map(filaAlmacen).join('')}</section>`; }).join('')
+      : `<div class="vacio"><b>Nada por aquí</b>Prueba con otro filtro o búsqueda.</div>`}`;
+  barraAlmacen();
+  enlazarFiltros();
+}
+
+/* ---------- PEDIDO ---------- */
+function totalLinea(p){ const n = aPedir(p); return (tienePrecio(p) && n) ? p.precio * n : 0; }
+function vistaPedido(){
+  const activos = productosActivos();
+  const gs = grupos(filtrar(activos).filter(p => aPedir(p) > 0 || S.extra[p.id] || S.verTodo));
+  const lineas = activos.filter(p => aPedir(p) > 0);
+  const total = lineas.reduce((s, p) => s + totalLinea(p), 0);
+  const nProv = new Set(lineas.map(p => p.proveedor)).size;
+  const hoy = new Date();
+  const dom = new Date(hoy); dom.setDate(hoy.getDate() + ((7 - hoy.getDay()) % 7));
+  document.getElementById('vista').innerHTML = `
+    <h1>Lista de la compra</h1>
+    <p class="sub">Para el domingo ${dom.toLocaleDateString('es-ES', {day:'numeric', month:'long'})}. Revisa cantidades, genera el PDF y envía cada pedido.</p>
+    <div class="resumen">
+      <div><b>${nProv}</b><span>Proveedores</span></div>
+      <div><b>${lineas.length}</b><span>Productos</span></div>
+      <div><b>${total ? Math.round(total).toLocaleString('es-ES') + ' €' : '–'}</b><span>Estimado</span></div>
+    </div>
+    <div class="pdfbar">
+      <button class="btn peq" type="button" id="btnPdf">Generar PDF editable</button>
+      <label class="chip"><input type="checkbox" id="pdfTodos" ${S.pdfTodos ? 'checked' : ''}> Incluir todos los proveedores</label>
+    </div>
+    <div id="pdfRes"></div>
+    ${filtrosHTML(false)}
+    <div class="fila-filtros"><label class="chip"><input type="checkbox" id="verTodo" ${S.verTodo ? 'checked' : ''}> Ver también lo que no hace falta pedir</label></div>
+    ${gs.length ? gs.map(([prov, ps]) => tarjetaProveedor(prov, ps)).join('')
+      : `<div class="vacio"><b>No hay nada que pedir</b>Cuando el equipo cuente el almacén, aquí saldrá lo que falta. También puedes activar «Ver también lo que no hace falta pedir».</div>`}`;
+  const pend = Object.keys(S.cantidades).length;
+  barraAccion(pend ? `<button class="btn" type="button" id="btnGuardarCant" ${S.guardando ? 'disabled' : ''}>${S.guardando ? 'Guardando…' : `Guardar cantidades (${pend})`}</button>` : '');
+  enlazarFiltros();
+}
+function tarjetaProveedor(prov, ps){
+  const P = provPorNombre(prov);
+  const otros = productosActivos().filter(p => p.proveedor === prov && !ps.includes(p));
+  const lineas = ps.filter(p => aPedir(p) > 0);
+  const total = lineas.reduce((s, p) => s + totalLinea(p), 0);
+  const msg = mensajePedido(P, lineas);
+  const info = [
+    P.canal && esc('Se pide por ' + P.canal.toLowerCase()),
+    P.diaPedido && esc('Pedir: ' + P.diaPedido), P.diaReparto && esc('Reparto: ' + P.diaReparto),
+    P.telefono && `<a href="tel:${esc(P.telefono.replace(/\s/g, ''))}">Tel. ${esc(P.telefono)}</a>`,
+    P.email && esc(P.email), P.direccion && esc(P.direccion),
+    P.pedidoMinimo !== '' && P.pedidoMinimo !== undefined && esc('Mínimo ' + eur(P.pedidoMinimo))].filter(Boolean);
+  const bajoMinimo = P.pedidoMinimo && total && total < P.pedidoMinimo;
+  const wa = P.whatsapp ? `https://wa.me/${P.whatsapp}?text=${encodeURIComponent(msg)}` : '';
+  const cfg = S.datos.config || {};
+  const asunto = (cfg.ASUNTO_EMAIL || 'Pedido El Otro Lado - {fecha}').replace('{fecha}', new Date().toLocaleDateString('es-ES'));
+  const mail = P.email ? `mailto:${P.email}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(msg)}` : '';
+  const conf = S.confirmar === prov;
+  return `<section class="prov" data-prov="${esc(prov)}">
+    <div class="prov-cab"><h2>${esc(prov)}</h2>${info.length ? `<div class="info">${info.map(i => `<span>${i}</span>`).join('')}</div>` : ''}</div>
+    ${ps.map(p => {
+      const n = aPedir(p);
+      const sub = [p.unidad, actualDe(p) !== '' ? 'quedan ' + fmtN(actualDe(p)) : '', yaPedido(p) ? 'pedido el ' + fecha(p.ultimoPedido) : ''].filter(Boolean).join(' · ');
+      return `<div class="lin ${n ? '' : 'cero'}" data-id="${esc(p.id)}">
+        <div class="n"><b>${esc(p.nombre)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div>
+        <input type="text" inputmode="decimal" value="${n ? fmtN(n) : ''}" placeholder="0" aria-label="Cantidad a pedir de ${esc(p.nombre)}" data-cant>
+        <span class="eur">${tienePrecio(p) && n ? eur(p.precio * n) : (tienePrecio(p) ? eur(p.precio) : '')}</span>
+      </div>`; }).join('')}
+    ${otros.length ? `<div class="anadir"><select data-anadir aria-label="Añadir producto de ${esc(prov)}"><option value="">+ Añadir otro producto de ${esc(prov)}</option>${otros.map(o => `<option value="${esc(o.id)}">${esc(o.nombre)}</option>`).join('')}</select></div>` : ''}
+    ${bajoMinimo ? `<div class="aviso" style="margin:10px 14px 0">No llega al pedido mínimo de ${eur(P.pedidoMinimo)}.</div>` : ''}
+    <div class="prov-pie">
+      ${lineas.length ? `
+        ${wa ? `<a class="btn peq" href="${wa}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
+        ${mail ? `<a class="btn peq sec" href="${mail}" target="_blank" rel="noopener">Email</a>` : ''}
+        <button type="button" class="btn peq sec" data-copiar>Copiar pedido</button>
+        ${conf ? `<button type="button" class="btn peq" data-hecho="si">Sí, ya está pedido</button><button type="button" class="btn peq sec" data-hecho="no">No</button>`
+               : `<button type="button" class="btn peq sec" data-hecho="preguntar">Marcar como pedido</button>`}
+      ` : `<span class="sub" style="margin:0">Nada que pedir</span>`}
+      ${total ? `<span class="total">${eur(total)}</span>` : ''}
+    </div>
+  </section>`;
+}
+function mensajePedido(P, lineas){
+  const cfg = S.datos.config || {};
+  const plantilla = String(cfg.MENSAJE_PEDIDO || 'Hola{contacto}, somos El Otro Lado. Os pasamos el pedido:\n{lineas}\n¡Gracias!').replace(/\\n/g, '\n');
+  const ls = lineas.map(p => `- ${fmtN(aPedir(p))}${p.unidad ? ' ' + p.unidad : ''} ${p.nombre}`).join('\n');
+  return plantilla.replace('{contacto}', P.contacto ? ' ' + P.contacto : '').replace('{lineas}', ls).replace('{fecha}', new Date().toLocaleDateString('es-ES'));
+}
+
+/* ---------- PRECIOS ---------- */
+function vistaPrecios(){
+  const activos = productosActivos();
+  const lista = filtrar(activos);
+  document.getElementById('vista').innerHTML = `
+    <h1>Precios</h1>
+    <p class="sub">${activos.filter(tienePrecio).length} de ${activos.length} productos con precio. Cada cambio queda guardado en la pestaña «Precios» de la hoja con su variación.</p>
+    ${filtrosHTML(false)}
+    ${grupos(lista).map(([prov, ps]) => `<section class="grupo"><div class="grupo-cab"><h2>${esc(prov)}</h2></div>
+      ${ps.map(p => `<div class="precio-lin" data-id="${esc(p.id)}">
+        <div><b>${esc(p.nombre)}</b><small>${p.unidad ? 'por ' + esc(p.unidad) : 'sin unidad'}${p.precioFecha ? ' · actualizado ' + hace(p.precioFecha) : ''}</small></div>
+        <div class="campo"><input type="text" inputmode="decimal" value="${tienePrecio(p) ? String(p.precio).replace('.', ',') : ''}" placeholder="–" aria-label="Precio de ${esc(p.nombre)}" data-precio> €</div>
+      </div>`).join('')}</section>`).join('')}`;
+  barraAccion('');
+  enlazarFiltros();
+}
+
+/* ---------- ADMINISTRACIÓN ---------- */
+function vistaAdmin(){
+  const t = S.adminTab;
+  const D = S.datos;
+  let cuerpo = '';
+  if (t === 'usuarios'){
+    const us = D.usuarios || [];
+    cuerpo = `<div class="cab-lista"><p>${us.filter(u => u.activo).length} activos. Básico: solo Almacén. Administrador: todo.</p><button class="btn peq" type="button" data-nuevo="usuario">Nuevo usuario</button></div>
+      ${us.map(u => `<button type="button" class="reg ${u.activo ? '' : 'inactivo'}" data-editar-usuario="${esc(u.nombre)}">
+        <span class="t"><b>${esc(u.nombre)}</b><small>${u.activo ? (u.tienePin ? 'Con PIN' : 'Sin PIN: no puede entrar') : 'Desactivado'}</small></span>
+        <span class="pill ${u.rol === 'Administrador' ? 'admin' : 'rol'}">${esc(u.rol)}</span><span class="chev">›</span></button>`).join('')}`;
+  } else if (t === 'proveedores'){
+    const q = sinAcentos(S.filtro.q.trim());
+    const ps = D.proveedores.filter(p => !q || sinAcentos(p.nombre).includes(q));
+    cuerpo = `<div class="cab-lista"><p>${D.proveedores.filter(p => p.activo !== false).length} proveedores activos</p><button class="btn peq" type="button" data-nuevo="proveedor">Nuevo proveedor</button></div>
+      <div class="filtros"><input class="buscar" id="q" type="search" placeholder="Buscar proveedor…" value="${esc(S.filtro.q)}" autocomplete="off"></div>
+      ${ps.map(p => { const n = D.productos.filter(x => x.proveedor === p.nombre && x.activo !== false).length;
+        const c = [p.telefono, p.email, p.direccion].filter(Boolean).join(' · ') || 'Sin datos de contacto';
+        return `<button type="button" class="reg ${p.activo === false ? 'inactivo' : ''}" data-editar-proveedor="${esc(p.id)}">
+        <span class="t"><b>${esc(p.nombre)}</b><small>${n} productos · ${esc(c)}</small></span>${p.activo === false ? '<span class="pill nada">Inactivo</span>' : ''}<span class="chev">›</span></button>`; }).join('')}`;
+  } else {
+    const lista = filtrar(D.productos);
+    cuerpo = `<div class="cab-lista"><p>${D.productos.filter(p => p.activo !== false).length} productos activos</p><button class="btn peq" type="button" data-nuevo="producto">Nuevo producto</button></div>
+      ${filtrosHTML(false, true)}
+      ${grupos(lista).map(([prov, ps]) => `<section class="grupo"><div class="grupo-cab"><h2>${esc(prov)}</h2><span>${ps.length}</span></div>
+        ${ps.map(p => `<button type="button" class="reg ${p.activo === false ? 'inactivo' : ''}" data-editar-producto="${esc(p.id)}">
+          <span class="t"><b>${esc(p.nombre)}</b><small>${[p.categoria, p.unidad, (p.minimo !== '' || p.ideal !== '') ? `mín. ${p.minimo === '' ? '–' : fmtN(p.minimo)} / ideal ${p.ideal === '' ? '–' : fmtN(p.ideal)}` : 'sin mínimo', tienePrecio(p) ? eur(p.precio) : ''].filter(Boolean).map(esc).join(' · ')}</small></span>
+          ${p.activo === false ? '<span class="pill nada">Inactivo</span>' : ''}<span class="chev">›</span></button>`).join('')}</section>`).join('')}`;
+  }
+  document.getElementById('vista').innerHTML = `
+    <h1>Administración</h1>
+    <div class="segm" role="group" aria-label="Qué gestionar">${[['usuarios','Usuarios'],['productos','Productos'],['proveedores','Proveedores']].map(([k, l]) =>
+      `<button type="button" data-admintab="${k}" aria-pressed="${t === k}">${l}</button>`).join('')}</div>
+    ${cuerpo}`;
+  barraAccion('');
+  enlazarFiltros();
+}
+
+/* Formularios en hoja modal */
+function abrirHoja(html){ document.getElementById('modal').innerHTML = `<div class="velo"><div class="hoja" role="dialog" aria-modal="true">${html}</div></div>`; }
+function cerrarHoja(){ document.getElementById('modal').innerHTML = ''; }
+const casilla = (id, txt, on) => `<label class="interruptor ancho"><input type="checkbox" id="${id}" ${on ? 'checked' : ''}> ${txt}</label>`;
+const botonesForm = conBorrar => `<p class="form-error" id="ferr" role="alert"></p><div class="botones">${conBorrar ? '<button class="btn peligro peq" type="button" id="bBorrar" style="margin-right:auto">Eliminar</button>' : ''}<button class="btn sec peq" type="button" data-cerrar>Cancelar</button><button class="btn peq" type="submit">Guardar</button></div>`;
+/* Confirmación antes de eliminar algo para siempre */
+function confirmarBorrado(titulo, texto, fn){
+  abrirHoja(`<h3>${titulo}</h3><p>${texto}</p><p class="form-error" id="ferr" role="alert"></p>
+    <div class="botones"><button class="btn sec peq" type="button" data-cerrar>Cancelar</button><button class="btn peligro peq" type="button" id="bSiBorrar">Sí, eliminar</button></div>`);
+  document.getElementById('bSiBorrar').onclick = async ev => {
+    const b = ev.target; b.disabled = true; b.textContent = 'Eliminando…';
+    try { const msg = await fn(); cerrarHoja(); toast(msg); render(); }
+    catch(e){ mostrarErrorForm(e.message); b.disabled = false; b.textContent = 'Sí, eliminar'; }
+  };
+}
+
+function formUsuario(nombre){
+  const u = (S.datos.usuarios || []).find(x => x.nombre === nombre) || { nombre: '', rol: 'Básico', activo: true };
+  const nuevo = !nombre;
+  abrirHoja(`<h3>${nuevo ? 'Nuevo usuario' : esc(u.nombre)}</h3><p>${nuevo ? 'Entrará con su nombre y este PIN.' : 'Deja el PIN vacío para no cambiarlo.'}</p>
+    <form class="form" id="fUsuario" data-original="${esc(u.nombre)}">
+      <label class="ancho">Nombre<input id="u_nombre" value="${esc(u.nombre)}" required autocomplete="off"></label>
+      <label>Rol<select id="u_rol">${opciones(['Básico','Administrador'], u.rol)}</select></label>
+      <label>${nuevo ? 'PIN' : 'PIN nuevo'} <small id="u_pin_ayuda">(${u.rol === 'Administrador' ? 6 : 4} números)</small><input id="u_pin" inputmode="numeric" pattern="[0-9]{${u.rol === 'Administrador' ? 6 : 4}}" maxlength="${u.rol === 'Administrador' ? 6 : 4}" autocomplete="off" placeholder="${nuevo ? '' : '••••'}"></label>
+      ${nuevo ? '' : casilla('u_activo', 'Activo (puede entrar en la app)', u.activo)}
+      ${botonesForm()}
+    </form>`);
+  document.getElementById('u_rol').onchange = ev => {
+    const n = ev.target.value === 'Administrador' ? 6 : 4, i = document.getElementById('u_pin');
+    i.maxLength = n; i.pattern = '[0-9]{' + n + '}'; document.getElementById('u_pin_ayuda').textContent = '(' + n + ' números)';
+  };
+  document.getElementById('fUsuario').onsubmit = async ev => {
+    ev.preventDefault();
+    const obj = { original: ev.target.dataset.original, nombre: val('u_nombre'), rol: val('u_rol'), pin: val('u_pin'), activo: nuevo ? true : document.getElementById('u_activo').checked };
+    await enviarForm(async () => {
+      const r = await server('guardarUsuario', obj);
+      if (r.cred){ S.cred = r.cred; }
+      S.datos = r.datos; S.usuario = r.datos.usuario;
+      return nuevo ? 'Usuario creado' : 'Usuario guardado';
+    });
+  };
+}
+function formProveedor(id){
+  const p = S.datos.proveedores.find(x => x.id === id) || { activo: true };
+  const nuevo = !id;
+  abrirHoja(`<h3>${nuevo ? 'Nuevo proveedor' : esc(p.nombre)}</h3><p>${nuevo ? 'Solo el nombre es obligatorio.' : 'Si cambias el nombre, se cambia también en sus productos.'}</p>
+    <form class="form" id="fProv">
+      <label class="ancho">Nombre<input id="p_nombre" value="${esc(p.nombre)}" required autocomplete="off"></label>
+      <label>Tipo<select id="p_tipo">${opciones(LISTAS.categorias, p.tipo, '—')}</select></label>
+      <label>Persona de contacto<input id="p_contacto" value="${esc(p.contacto)}" autocomplete="off"></label>
+      <div class="sep">Contacto</div>
+      <label>Teléfono<input id="p_telefono" type="tel" value="${esc(p.telefono)}" autocomplete="off"></label>
+      <label>WhatsApp<input id="p_whatsapp" type="tel" value="${esc(p.whatsapp)}" placeholder="34600123456" autocomplete="off"></label>
+      <label class="ancho">Correo electrónico<input id="p_email" type="email" value="${esc(p.email)}" autocomplete="off"></label>
+      <label class="ancho">Dirección<textarea id="p_direccion" rows="2">${esc(p.direccion)}</textarea></label>
+      <div class="sep">Pedidos</div>
+      <label>Cómo se pide<select id="p_canal">${opciones(LISTAS.canales, p.canal, '—')}</select></label>
+      <label>Pedido mínimo (€)<input id="p_minimo" inputmode="decimal" value="${p.pedidoMinimo === '' || p.pedidoMinimo === undefined ? '' : esc(p.pedidoMinimo)}"></label>
+      <label>Día de pedido<select id="p_diaPedido">${opciones(LISTAS.dias, p.diaPedido, '—')}</select></label>
+      <label>Día de reparto<select id="p_diaReparto">${opciones(LISTAS.dias, p.diaReparto, '—')}</select></label>
+      
+      <label class="ancho">Notas<textarea id="p_notas" rows="2">${esc(p.notas)}</textarea></label>
+      ${nuevo ? '' : casilla('p_activo', 'Activo (sale en almacén y pedidos)', p.activo !== false)}
+      ${botonesForm(!nuevo)}
+    </form>`);
+  if (!nuevo) document.getElementById('bBorrar').onclick = () => {
+    const n = S.datos.productos.filter(x => x.proveedor === p.nombre).length;
+    confirmarBorrado('¿Eliminar ' + esc(p.nombre) + '?',
+      'Se borra para siempre' + (n ? ' junto con sus <b>' + n + (n === 1 ? ' producto' : ' productos') + '</b>' : '') + '. El historial de recuentos, pedidos y precios se conserva.<br><br>Si solo quieres que deje de salir, mejor desmarca «Activo».',
+      async () => { S.datos = await server('eliminarProveedor', { id: p.id }); return 'Proveedor eliminado'; });
+  };
+  document.getElementById('fProv').onsubmit = async ev => {
+    ev.preventDefault();
+    const obj = { id: p.id || '', nombre: val('p_nombre'), tipo: val('p_tipo'), contacto: val('p_contacto'), telefono: val('p_telefono'),
+      whatsapp: val('p_whatsapp'), email: val('p_email'), direccion: val('p_direccion'), canal: val('p_canal'), pedidoMinimo: val('p_minimo'),
+      diaPedido: val('p_diaPedido'), diaReparto: val('p_diaReparto'), orden: p.orden === undefined ? '' : p.orden, notas: val('p_notas'),
+      activo: nuevo ? true : document.getElementById('p_activo').checked };
+    if (obj.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(obj.email)) return mostrarErrorForm('Revisa el correo electrónico.');
+    await enviarForm(async () => { S.datos = await server('guardarProveedor', obj); return nuevo ? 'Proveedor creado' : 'Proveedor guardado'; });
+  };
+}
+function formProducto(id){
+  const p = S.datos.productos.find(x => x.id === id) || { activo: true, proveedor: S.filtro.prov || '', minimo: '', ideal: '', precio: '' };
+  const nuevo = !id;
+  const provs = S.datos.proveedores.filter(x => x.activo !== false || x.nombre === p.proveedor).map(x => x.nombre);
+  abrirHoja(`<h3>${nuevo ? 'Nuevo producto' : esc(p.nombre)}</h3><p>Con mínimo e ideal la app sabe cuándo y cuánto pedir.</p>
+    <form class="form" id="fProd">
+      <label class="ancho">Nombre<input id="r_nombre" value="${esc(p.nombre)}" required autocomplete="off"></label>
+      <label class="ancho">Proveedor<select id="r_proveedor" required>${opciones(provs, p.proveedor, 'Elige proveedor')}</select></label>
+      <label>Categoría<select id="r_categoria">${opciones(LISTAS.categorias, p.categoria, '—')}</select></label>
+      <label>Unidad de compra<input id="r_unidad" list="dl_unidades" value="${esc(p.unidad)}" placeholder="caja, botella…" autocomplete="off"></label>
+      <datalist id="dl_unidades">${LISTAS.unidades.map(u => `<option value="${esc(u)}">`).join('')}</datalist>
+      <label>Stock mínimo<input id="r_minimo" inputmode="decimal" value="${p.minimo === '' ? '' : esc(p.minimo)}"></label>
+      <label>Stock ideal<input id="r_ideal" inputmode="decimal" value="${p.ideal === '' ? '' : esc(p.ideal)}"></label>
+      <label>Precio (€, sin IVA)<input id="r_precio" inputmode="decimal" value="${tienePrecio(p) ? String(p.precio).replace('.', ',') : ''}"></label>
+      <label class="ancho">Notas<textarea id="r_notas" rows="2">${esc(p.notas)}</textarea></label>
+      ${nuevo ? '' : casilla('r_activo', 'Activo (sale en almacén y pedidos)', p.activo !== false)}
+      ${botonesForm(!nuevo)}
+    </form>`);
+  if (!nuevo) document.getElementById('bBorrar').onclick = () => confirmarBorrado('¿Eliminar ' + esc(p.nombre) + '?',
+    'Se borra para siempre de ' + esc(p.proveedor) + '. El historial de recuentos, pedidos y precios se conserva.<br><br>Si solo quieres que deje de salir, mejor desmarca «Activo».',
+    async () => { S.datos = await server('eliminarProducto', { id: p.id }); return 'Producto eliminado'; });
+  document.getElementById('fProd').onsubmit = async ev => {
+    ev.preventDefault();
+    const obj = { id: p.id || '', nombre: val('r_nombre'), proveedor: val('r_proveedor'), categoria: val('r_categoria'), unidad: val('r_unidad'),
+      minimo: num(val('r_minimo')), ideal: num(val('r_ideal')), precio: num(val('r_precio')), notas: val('r_notas'),
+      activo: nuevo ? true : document.getElementById('r_activo').checked };
+    if (!obj.proveedor) return mostrarErrorForm('Elige un proveedor.');
+    if (obj.minimo !== '' && obj.ideal !== '' && obj.ideal < obj.minimo) return mostrarErrorForm('El stock ideal no puede ser menor que el mínimo.');
+    await enviarForm(async () => { S.datos = await server('guardarProducto', obj); return nuevo ? 'Producto creado' : 'Producto guardado'; });
+  };
+}
+const val = id => document.getElementById(id).value.trim();
+function mostrarErrorForm(t){ const e = document.getElementById('ferr'); if (e) e.textContent = t; }
+async function enviarForm(fn){
+  const b = document.querySelector('.hoja button[type="submit"]');
+  if (b){ b.disabled = true; b.textContent = 'Guardando…'; }
+  try { const msg = await fn(); cerrarHoja(); toast(msg); render(); }
+  catch(e){ mostrarErrorForm(e.message); if (b){ b.disabled = false; b.textContent = 'Guardar'; } }
+}
+
+/* ---------- RECEPCIÓN ---------- */
+function ymd(d){ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function deYmd(t){ const [a, m, d] = t.split('-').map(Number); return new Date(a, m - 1, d); }
+const pendLinea = l => Math.max((l.cantidad || 0) - (l.recibido || 0), 0);
+function vistaRecepcion(){
+  const peds = S.datos.pedidos || [];
+  const p = S.recep && peds.find(x => x.num === S.recep.num);
+  if (S.recep && !p) S.recep = null;
+  if (!p){
+    document.getElementById('vista').innerHTML = `
+      <h1>Recepción de pedidos</h1>
+      <p class="sub">Cuando llegue un proveedor, abre su pedido y marca lo que trae. Lo recibido se suma solo al almacén.</p>
+      ${peds.length ? peds.map(x => {
+        const falta = x.lineas.reduce((s, l) => s + pendLinea(l), 0);
+        const prods = x.lineas.filter(l => pendLinea(l) > 0).length;
+        return `<button type="button" class="ped" data-recep="${esc(x.num)}">
+          <span class="t"><b>${esc(x.proveedor)}</b><small>Pedido el ${fecha(x.fecha)}${x.hechoPor ? ' por ' + esc(x.hechoPor) : ''} · ${prods} ${prods === 1 ? 'producto' : 'productos'} por recibir (${fmtN(falta)} uds)</small></span>
+          <span class="pill ${x.estado === 'Parcial' ? 'parcial' : 'pend'}">${x.estado === 'Parcial' ? 'Parcial' : 'Pendiente'}</span><span class="chev">›</span></button>`; }).join('')
+      : `<div class="vacio"><b>No hay pedidos por recibir</b>Los pedidos aparecen aquí cuando en Pedido se marcan como «pedido».</div>`}`;
+    barraAccion('');
+    return;
+  }
+  const ahora = S.recep.ahora;
+  const lineas = p.lineas.map(l => ({ ...l, ya: num(ahora[l.id]) || 0 }));
+  const quedan = lineas.reduce((s, l) => s + Math.max(pendLinea(l) - l.ya, 0), 0);
+  const marcado = lineas.reduce((s, l) => s + l.ya, 0);
+  document.getElementById('vista').innerHTML = `
+    <button type="button" class="volver-lista" data-recep-lista>‹ Todos los pedidos</button>
+    <h1>${esc(p.proveedor)}</h1>
+    <p class="sub">Pedido del ${fecha(p.fecha)}${p.hechoPor ? ' (' + esc(p.hechoPor) + ')' : ''}${p.estado === 'Parcial' ? ' · ya recibido en parte' : ''}. Pulsa + por cada unidad que llega o «Todo» si ha llegado completo.</p>
+    ${lineas.map(l => {
+      const pend = pendLinea(l);
+      const falta = Math.max(pend - l.ya, 0);
+      return `<div class="rec ${falta === 0 ? 'listo' : ''}" data-id="${esc(l.id)}">
+        <div class="nom">${esc(l.producto)}</div>
+        <div class="falta"><b>${falta === 0 ? '✓' : fmtN(falta)}</b><small>${falta === 0 ? 'completo' : 'faltan'}</small></div>
+        <div class="meta">Pedido ${fmtN(l.cantidad)}${l.unidad ? ' ' + esc(l.unidad) : ''}${l.recibido ? ' · ya recibido ' + fmtN(l.recibido) : ''}</div>
+        ${pend > 0 ? `<div class="ctrl">
+          <div class="paso">
+            <button type="button" data-rpaso="-1" aria-label="Uno menos">−</button>
+            <input type="text" inputmode="decimal" value="${l.ya || ''}" placeholder="0" aria-label="Recibido ahora de ${esc(l.producto)}" data-rcant>
+            <button type="button" data-rpaso="1" aria-label="Uno más">+</button>
+          </div>
+          <button type="button" class="btn todo" data-rtodo>${falta === 0 ? 'Llegó todo' : 'Todo (' + fmtN(pend) + ')'}</button>
+        </div>` : ''}
+      </div>`; }).join('')}
+    ${esAdmin() ? `<div class="aviso" style="margin-top:18px">¿El proveedor no va a traer lo que falta?
+      ${S.recepConfirmar ? `<div class="botones" style="justify-content:flex-start;margin-top:8px"><button type="button" class="btn peq peligro" data-rcerrar="si">Sí, cerrar el pedido con faltas</button><button type="button" class="btn peq sec" data-rcerrar="no">No</button></div>`
+        : ` <button type="button" class="linkbtn" data-rcerrar="preguntar">Cerrar pedido con faltas</button>`}</div>` : ''}`;
+  barraAccion(S.guardando ? `<button class="btn" type="button" disabled>Guardando…</button>`
+    : quedan === 0 ? `<button class="btn" type="button" id="btnRecFin">Finalizar pedido</button>`
+    : `<button class="btn" type="button" id="btnRecParcial" ${marcado ? '' : 'disabled'}>Recepción parcial${marcado ? ' (' + fmtN(marcado) + ' uds)' : ''}</button>`);
+}
+function tocarRecep(id, v){
+  const p = (S.datos.pedidos || []).find(x => x.num === S.recep.num);
+  const l = p && p.lineas.find(x => x.id === id);
+  if (!l) return;
+  const n = Math.max(0, num(v) || 0);
+  if (n) S.recep.ahora[id] = n; else delete S.recep.ahora[id];
+  render();
+}
+async function enviarRecepcion(cerrar){
+  const p = (S.datos.pedidos || []).find(x => x.num === S.recep.num);
+  const lineas = Object.entries(S.recep.ahora).map(([id, cantidad]) => ({ id, cantidad: num(cantidad) })).filter(l => l.cantidad > 0);
+  const quedan = p.lineas.reduce((s, l) => s + Math.max(pendLinea(l) - (num(S.recep.ahora[l.id]) || 0), 0), 0);
+  S.guardando = true; render(); setSync('Guardando…');
+  try {
+    S.datos = await server('recepcionarPedido', { num: p.num, lineas, cerrar: !!cerrar });
+    toast(cerrar ? 'Pedido cerrado con faltas' : quedan === 0 ? 'Pedido completo. Sumado al almacén' : 'Recepción parcial guardada');
+    S.recep = null; S.recepConfirmar = false;
+  } catch(e){ toast('No se guardó: ' + e.message); }
+  S.guardando = false; setSync(''); if (S.datos) render();
+}
+
+/* ---------- CAJA ---------- */
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+function sumaCaja(desde, hasta){
+  const r = { efectivo: 0, tarjeta: 0, total: 0, dias: 0 };
+  (S.datos.caja || []).forEach(c => { if (c.fecha >= desde && c.fecha <= hasta){ r.efectivo += c.efectivo || 0; r.tarjeta += c.tarjeta || 0; r.total += c.total || 0; r.dias++; } });
+  return r;
+}
+const eur0 = n => n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function vistaCaja(){
+  const C = S.caja;
+  const hoy = new Date();
+  if (!C.sel) C.sel = ymd(hoy);
+  const sel = deYmd(C.sel);
+  if (!C.mes) C.mes = new Date(sel.getFullYear(), sel.getMonth(), 1);
+  const mapa = {}; (S.datos.caja || []).forEach(c => mapa[c.fecha] = c);
+  const y = C.mes.getFullYear(), m = C.mes.getMonth();
+  const primero = (new Date(y, m, 1).getDay() + 6) % 7;
+  const nDias = new Date(y, m + 1, 0).getDate();
+  let celdas = '';
+  for (let i = 0; i < primero; i++) celdas += '<button type="button" class="fuera" tabindex="-1" aria-hidden="true"></button>';
+  for (let d = 1; d <= nDias; d++){
+    const k = ymd(new Date(y, m, d)), c = mapa[k];
+    celdas += `<button type="button" data-cdia="${k}" class="${k === ymd(hoy) ? 'hoy' : ''} ${k === C.sel ? 'sel' : ''}" aria-label="${d} de ${MESES[m]}${c ? ', ' + eur0(c.total) : ''}">
+      <span class="n">${d}</span>${c ? `<span class="v">${Math.round(c.total).toLocaleString('es-ES')}</span>` : ''}</button>`;
+  }
+  const c = mapa[C.sel] || {};
+  const f = C.form && C.form.fecha === C.sel ? C.form : { fecha: C.sel, efectivo: c.efectivo ?? '', tarjeta: c.tarjeta ?? '', notas: c.notas || '' };
+  C.form = f;
+  const tot = (num(f.efectivo) || 0) + (num(f.tarjeta) || 0);
+  // Resúmenes del día seleccionado
+  const lunes = new Date(sel); lunes.setDate(sel.getDate() - ((sel.getDay() + 6) % 7));
+  const domingo = new Date(lunes); domingo.setDate(lunes.getDate() + 6);
+  const sy = sel.getFullYear(), sm = sel.getMonth(), tq = Math.floor(sm / 3);
+  const tiles = [
+    ['Semana ' + lunes.getDate() + '–' + domingo.getDate() + ' ' + MESES[domingo.getMonth()].slice(0, 3), sumaCaja(ymd(lunes), ymd(domingo))],
+    [MESES[sm] + ' ' + sy, sumaCaja(ymd(new Date(sy, sm, 1)), ymd(new Date(sy, sm + 1, 0)))],
+    [(tq + 1) + 'º trimestre ' + sy, sumaCaja(ymd(new Date(sy, tq * 3, 1)), ymd(new Date(sy, tq * 3 + 3, 0)))],
+    ['Año ' + sy, sumaCaja(sy + '-01-01', sy + '-12-31')]
+  ];
+  const filasAnio = MESES.map((nm, i) => [nm, sumaCaja(ymd(new Date(sy, i, 1)), ymd(new Date(sy, i + 1, 0)))]);
+  const anio = tiles[3][1];
+  const fechaLarga = sel.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('vista').innerHTML = `
+    <h1>Control de caja</h1>
+    <p class="sub">Elige un día, apunta el efectivo y la tarjeta y guarda. Los totales se calculan solos.</p>
+    <div class="mesnav"><button type="button" data-cmes="-1" aria-label="Mes anterior">‹</button><b>${MESES[m]} ${y}</b><button type="button" data-cmes="1" aria-label="Mes siguiente">›</button></div>
+    <div class="cal">${['L','M','X','J','V','S','D'].map(d => `<span class="dow">${d}</span>`).join('')}${celdas}</div>
+    <form class="dia" id="fCaja">
+      <h2>${esc(fechaLarga.charAt(0).toUpperCase() + fechaLarga.slice(1))}</h2>
+      <div class="campos">
+        <label>EFECTIVO<input id="caja_ef" inputmode="decimal" value="${f.efectivo === '' ? '' : typeof f.efectivo === 'number' ? f.efectivo.toFixed(2).replace('.', ',') : esc(f.efectivo)}" placeholder="0,00" autocomplete="off"></label>
+        <label>TARJETA<input id="caja_ta" inputmode="decimal" value="${f.tarjeta === '' ? '' : typeof f.tarjeta === 'number' ? f.tarjeta.toFixed(2).replace('.', ',') : esc(f.tarjeta)}" placeholder="0,00" autocomplete="off"></label>
+        <label style="grid-column:1/-1">NOTAS<textarea id="caja_notas" rows="1" placeholder="Opcional">${esc(f.notas)}</textarea></label>
+      </div>
+      <div class="total"><span>TOTAL DEL DÍA</span><b id="caja_tot">${eur0(tot)}</b></div>
+      ${c.por ? `<p class="sub" style="margin:8px 0 0;font-size:13px">Apuntado por ${esc(c.por)}</p>` : ''}
+      <div class="botones">${c.fecha ? '<button type="button" class="btn peq peligro" data-cborrar>Borrar día</button>' : ''}<button type="submit" class="btn peq" ${S.guardando ? 'disabled' : ''}>${S.guardando ? 'Guardando…' : 'Guardar'}</button></div>
+    </form>
+    <h3 class="sec">Resumen</h3>
+    <div class="res">${tiles.map(([t, r]) => `<div><span>${esc(t)}</span><b>${eur0(r.total)}</b><small>Efectivo ${eur0(r.efectivo)}</small><small>Tarjeta ${eur0(r.tarjeta)}</small><small>${r.dias} ${r.dias === 1 ? 'día' : 'días'} apuntados</small></div>`).join('')}</div>
+    <h3 class="sec">Meses de ${sy}</h3>
+    <div class="tabla-wrap"><table class="anio"><thead><tr><th>Mes</th><th>Efectivo</th><th>Tarjeta</th><th>Total</th></tr></thead><tbody>
+      ${filasAnio.map(([nm, r]) => `<tr><td>${nm}</td><td>${r.dias ? eur0(r.efectivo) : '–'}</td><td>${r.dias ? eur0(r.tarjeta) : '–'}</td><td>${r.dias ? eur0(r.total) : '–'}</td></tr>`).join('')}
+      <tr class="tot"><td>Total ${sy}</td><td>${eur0(anio.efectivo)}</td><td>${eur0(anio.tarjeta)}</td><td>${eur0(anio.total)}</td></tr>
+    </tbody></table></div>`;
+  barraAccion('');
+  const fc = document.getElementById('fCaja');
+  const act = () => {
+    C.form = { fecha: C.sel, efectivo: document.getElementById('caja_ef').value.replace(/[^0-9.,]/g, ''), tarjeta: document.getElementById('caja_ta').value.replace(/[^0-9.,]/g, ''), notas: document.getElementById('caja_notas').value };
+    document.getElementById('caja_tot').textContent = eur0((num(C.form.efectivo) || 0) + (num(C.form.tarjeta) || 0));
+  };
+  fc.oninput = act;
+  fc.onsubmit = async ev => { ev.preventDefault(); act(); await guardarCaja(false); };
+}
+async function guardarCaja(borrar){
+  const f = S.caja.form;
+  const payload = borrar ? { fecha: S.caja.sel, efectivo: '', tarjeta: '', notas: '' } : { fecha: S.caja.sel, efectivo: num(f.efectivo), tarjeta: num(f.tarjeta), notas: f.notas };
+  if (!borrar && payload.efectivo === '' && payload.tarjeta === ''){ toast('Escribe el efectivo o la tarjeta'); return; }
+  S.guardando = true; render(); setSync('Guardando…');
+  try { S.datos = await server('guardarCaja', payload); S.caja.form = null; toast(borrar ? 'Día borrado' : 'Caja guardada'); }
+  catch(e){ toast('No se guardó: ' + e.message); }
+  S.guardando = false; setSync(''); if (S.datos) render();
+}
+
+/* ===================== Interacción ===================== */
+function barraAccion(html){
+  const w = document.getElementById('accionWrap'); if (!w) return;
+  w.innerHTML = html; document.getElementById('accion').hidden = !html;
+}
+function enlazarFiltros(){
+  const q = document.getElementById('q');
+  if (q) q.oninput = () => { S.filtro.q = q.value; const pos = q.selectionStart; render(); const n = document.getElementById('q'); n.focus(); n.setSelectionRange(pos, pos); };
+  const fp = document.getElementById('fprov');
+  if (fp) fp.onchange = () => { S.filtro.prov = fp.value; render(); };
+}
+function guardarBorrador(){ ls.set(claveBorrador(), S.borrador); }
+function refrescarFila(id){
+  const p = S.datos.productos.find(x => x.id === id);
+  const el = document.querySelector(`.prod[data-id="${CSS.escape(id)}"]`);
+  if (!p || !el) return render();
+  const foco = document.activeElement && el.contains(document.activeElement) ? document.activeElement.dataset.campo : null;
+  el.outerHTML = filaAlmacen(p);
+  if (foco){ const n = document.querySelector(`.prod[data-id="${CSS.escape(id)}"] [data-campo="${foco}"]`); if (n){ n.focus(); const l = n.value.length; try { n.setSelectionRange(l, l); } catch(e){} } }
+  barraAlmacen();
+}
+function tocarBorrador(id, campo, valor){
+  const b = S.borrador[id] || {};
+  if (campo === 'aPedir') b.aPedir = valor; else b.actual = valor;
+  if ((b.actual === undefined || b.actual === '') && !('aPedir' in b)) delete S.borrador[id]; else S.borrador[id] = b;
+  guardarBorrador();
+}
+
+document.addEventListener('click', async e => {
+  const t = e.target.closest('button, a');
+  if (!t) { if (e.target.classList.contains('velo')) cerrarHoja(); return; }
+  if (t.dataset.tecla){ tecla(t.dataset.tecla); return; }
+  if (t.dataset.ir){ ir(t.dataset.ir); return; }
+  if (t.dataset.recep){ S.recep = { num: t.dataset.recep, ahora: {} }; S.recepConfirmar = false; window.scrollTo(0, 0); render(); return; }
+  if ('recepLista' in t.dataset){ S.recep = null; render(); return; }
+  const rec = t.closest('.rec');
+  if (rec && t.dataset.rpaso){ tocarRecep(rec.dataset.id, (num(S.recep.ahora[rec.dataset.id]) || 0) + Number(t.dataset.rpaso)); return; }
+  if (rec && 'rtodo' in t.dataset){
+    const p = S.datos.pedidos.find(x => x.num === S.recep.num), l = p.lineas.find(x => x.id === rec.dataset.id);
+    tocarRecep(rec.dataset.id, pendLinea(l)); return;
+  }
+  if (t.dataset.rcerrar){
+    if (t.dataset.rcerrar === 'preguntar'){ S.recepConfirmar = true; render(); return; }
+    if (t.dataset.rcerrar === 'no'){ S.recepConfirmar = false; render(); return; }
+    await enviarRecepcion(true); return;
+  }
+  if (t.id === 'btnRecFin' || t.id === 'btnRecParcial'){ await enviarRecepcion(false); return; }
+  if (t.dataset.cdia){ S.caja.sel = t.dataset.cdia; S.caja.form = null; render(); return; }
+  if (t.dataset.cmes){ const mm = S.caja.mes; S.caja.mes = new Date(mm.getFullYear(), mm.getMonth() + Number(t.dataset.cmes), 1); render(); return; }
+  if ('cborrar' in t.dataset){
+    const fl = new Date(S.caja.sel + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+    abrirHoja(`<h3>¿Seguro que quieres borrar el día?</h3><p>Se borrará la caja del ${esc(fl)}.</p>
+      <div class="botones"><button class="btn sec peq" type="button" data-cerrar>Cancelar</button><button class="btn peligro peq" type="button" data-cborrarsi>Sí, borrar</button></div>`);
+    return;
+  }
+  if ('cborrarsi' in t.dataset){ cerrarHoja(); await guardarCaja(true); return; }
+  if ('salir' in t.dataset){ salir(); return; }
+  if (t.id === 'btnQuien'){
+    abrirHoja(`<h3>${esc(S.usuario.nombre)}</h3><p>${esc(S.usuario.rol)}</p><div class="botones" style="justify-content:flex-start"><button class="btn peq" type="button" data-salir>Salir y cambiar de usuario</button><button class="btn peq sec" type="button" data-cerrar>Cerrar</button></div>`);
+    return;
+  }
+  if ('cerrar' in t.dataset){ cerrarHoja(); return; }
+  if (t.dataset.modo){ S.filtro.modo = t.dataset.modo; render(); return; }
+  if (t.dataset.admintab){ S.adminTab = t.dataset.admintab; S.filtro = { q: '', prov: '', modo: 'todos' }; render(); return; }
+  if (t.dataset.nuevo){ ({usuario: formUsuario, proveedor: formProveedor, producto: formProducto})[t.dataset.nuevo](); return; }
+  if (t.dataset.editarUsuario !== undefined){ formUsuario(t.dataset.editarUsuario); return; }
+  if (t.dataset.editarProveedor !== undefined){ formProveedor(t.dataset.editarProveedor); return; }
+  if (t.dataset.editarProducto !== undefined){ formProducto(t.dataset.editarProducto); return; }
+  const fila = t.closest('.prod');
+  if (fila && t.dataset.paso){
+    const id = fila.dataset.id, p = S.datos.productos.find(x => x.id === id);
+    const b = S.borrador[id];
+    const base = (b && b.actual !== undefined && b.actual !== '') ? num(b.actual) : (p.actual === '' ? 0 : p.actual);
+    tocarBorrador(id, 'actual', String(Math.max(0, base + Number(t.dataset.paso)))); refrescarFila(id); return;
+  }
+  if (fila && 'abrir' in t.dataset){ S.abierto = S.abierto === fila.dataset.id ? null : fila.dataset.id; refrescarFila(fila.dataset.id); return; }
+  if (t.id === 'btnGuardar'){ await guardarRecuento(); return; }
+  if (t.id === 'btnGuardarCant'){ await guardarCantidades(); return; }
+  if (t.id === 'btnPdf'){ await generarPdf(); return; }
+  const prov = t.closest('.prov');
+  if (prov && 'copiar' in t.dataset){
+    const P = provPorNombre(prov.dataset.prov);
+    const txt = mensajePedido(P, productosActivos().filter(p => p.proveedor === P.nombre && aPedir(p) > 0));
+    try { await navigator.clipboard.writeText(txt); toast('Pedido copiado'); }
+    catch(err){ abrirHoja(`<h3>Copia el pedido</h3><textarea style="width:100%;min-height:200px" readonly>${esc(txt)}</textarea><div class="botones"><button class="btn peq" type="button" data-cerrar>Cerrar</button></div>`); }
+    return;
+  }
+  if (prov && t.dataset.hecho){
+    if (t.dataset.hecho === 'preguntar'){ S.confirmar = prov.dataset.prov; render(); return; }
+    if (t.dataset.hecho === 'no'){ S.confirmar = ''; render(); return; }
+    await marcarHecho(prov.dataset.prov); return;
+  }
+});
+document.addEventListener('input', e => {
+  const el = e.target;
+  const fila = el.closest('.prod');
+  if (fila && el.dataset.campo){
+    tocarBorrador(fila.dataset.id, el.dataset.campo, el.value.replace(/[^0-9.,]/g, ''));
+    barraAlmacen();
+    fila.classList.toggle('cambiado', !!S.borrador[fila.dataset.id]);
+  }
+});
+document.addEventListener('change', async e => {
+  const el = e.target;
+  const fila = el.closest('.prod');
+  if (fila && el.dataset.campo){ refrescarFila(fila.dataset.id); return; }
+  if (el.id === 'verTodo'){ S.verTodo = el.checked; render(); return; }
+  if (el.id === 'pdfTodos'){ S.pdfTodos = el.checked; return; }
+  const recl = el.closest('.rec');
+  if (recl && 'rcant' in el.dataset){ tocarRecep(recl.dataset.id, el.value.replace(/[^0-9.,]/g, '')); return; }
+  const lin = el.closest('.lin');
+  if (lin && 'cant' in el.dataset){ S.cantidades[lin.dataset.id] = el.value.replace(/[^0-9.,]/g, '') || '0'; render(); return; }
+  if ('anadir' in el.dataset && el.value){ S.extra[el.value] = true; render(); return; }
+  const pl = el.closest('.precio-lin');
+  if (pl && 'precio' in el.dataset){
+    const v = num(el.value);
+    if (v === '') return;
+    setSync('Guardando…');
+    try { S.datos = await server('actualizarPrecio', {id: pl.dataset.id, precio: v}); toast('Precio guardado'); }
+    catch(err){ toast('No se guardó: ' + err.message); }
+    setSync(''); render();
+  }
+});
+
+/* ===================== Acciones ===================== */
+async function guardarRecuento(){
+  const items = Object.entries(S.borrador).map(([id, b]) => {
+    const it = { id, actual: b.actual === undefined ? '' : num(b.actual) };
+    if ('aPedir' in b) it.aPedir = num(b.aPedir);
+    return it;
+  });
+  S.guardando = true; barraAlmacen(); setSync('Guardando…');
+  try {
+    S.datos = await server('guardarRecuento', {items});
+    S.borrador = {}; guardarBorrador();
+    toast(`Guardado: ${items.length} producto${items.length === 1 ? '' : 's'}`);
+  } catch(e){ toast('No se pudo guardar. Revisa la conexión y vuelve a intentarlo.'); }
+  S.guardando = false; setSync(''); if (S.datos) render();
+}
+async function guardarCantidades(silencioso){
+  const items = Object.entries(S.cantidades).map(([id, v]) => ({id, aPedir: num(v)}));
+  if (!items.length) return true;
+  S.guardando = true; if (!silencioso) render(); setSync('Guardando…');
+  try {
+    S.datos = await server('guardarCantidades', {items});
+    S.cantidades = {};
+    if (!silencioso) toast('Cantidades guardadas');
+    return true;
+  } catch(e){ toast('No se pudo guardar: ' + e.message); return false; }
+  finally { S.guardando = false; setSync(''); if (!silencioso && S.datos) render(); }
+}
+async function marcarHecho(prov){
+  if (!(await guardarCantidades(true))) return;
+  const P = provPorNombre(prov);
+  const items = productosActivos().filter(p => p.proveedor === prov && aPedir(p) > 0).map(p => ({id: p.id, cantidad: aPedir(p)}));
+  setSync('Guardando…');
+  try {
+    S.datos = await server('marcarPedidoHecho', {proveedor: prov, via: P.canal || '', items});
+    toast(`Pedido a ${prov} apuntado`);
+  } catch(e){ toast('No se pudo guardar: ' + e.message); }
+  S.confirmar = ''; setSync(''); if (S.datos) render();
+}
+
+/* ===================== PDF editable ===================== */
+const WIN = /[^\x20-\x7E\xA0-\xFF€–—‘’“”•…]/g;
+const limpio = s => String(s ?? '').replace(/≤/g, '<=').replace(/[\r\n]+/g, ' ').replace(WIN, '');
+function corta(txt, font, size, ancho){
+  txt = limpio(txt);
+  if (font.widthOfTextAtSize(txt, size) <= ancho) return txt;
+  while (txt.length > 1 && font.widthOfTextAtSize(txt + '…', size) > ancho) txt = txt.slice(0, -1);
+  return txt + '…';
+}
+async function construirPdf(){
+  const { PDFDocument, StandardFonts, rgb } = PDFLib;
+  const doc = await PDFDocument.create();
+  doc.setTitle('Lista de pedido - El Otro Lado'); doc.setAuthor(S.usuario.nombre);
+  const helv = await doc.embedFont(StandardFonts.Helvetica);
+  const bold = await doc.embedFont(StandardFonts.HelveticaBold);
+  const serif = await doc.embedFont(StandardFonts.TimesRomanBold);
+  const logoBytes = Uint8Array.from(atob(LOGO.split(',')[1]), c => c.charCodeAt(0));
+  const logo = LOGO.startsWith('data:image/png') ? await doc.embedPng(logoBytes) : await doc.embedJpg(logoBytes);
+  const form = doc.getForm();
+  const OSC = rgb(0.169, 0.145, 0.149), BEI = rgb(0.839, 0.737, 0.659), GRIS = rgb(0.45, 0.4, 0.38), LIN = rgb(0.85, 0.81, 0.78), CAMPO = rgb(1, 0.98, 0.93);
+  const W = 595.28, H = 841.89, M = 36;
+  const COL = { prod: M, ud: 300, stock: 360, cant: 405, precio: 462, nota: 505 };
+  let page, y, nPag = 0;
+  const hoy = new Date();
+  const fechaLarga = hoy.toLocaleDateString('es-ES', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  function nuevaPagina(){
+    page = doc.addPage([W, H]); nPag++;
+    if (nPag === 1){
+      page.drawRectangle({x: 0, y: H - 110, width: W, height: 110, color: OSC});
+      page.drawImage(logo, {x: M, y: H - 98, width: 86, height: 86});
+      page.drawText('Lista de pedido', {x: M + 104, y: H - 52, size: 26, font: serif, color: BEI});
+      page.drawText(limpio(fechaLarga.charAt(0).toUpperCase() + fechaLarga.slice(1)), {x: M + 104, y: H - 72, size: 11, font: helv, color: BEI});
+      page.drawText(limpio('Preparada por: ' + S.usuario.nombre), {x: M + 104, y: H - 88, size: 9, font: helv, color: BEI});
+      const tf = form.createTextField('notas_generales');
+      tf.setText(''); tf.enableMultiline();
+      page.drawText('Notas generales:', {x: 360, y: H - 30, size: 8, font: bold, color: BEI});
+      tf.addToPage(page, {x: 360, y: H - 100, width: W - 360 - M, height: 64, font: helv, backgroundColor: rgb(0.23, 0.2, 0.2), borderColor: rgb(0.42, 0.35, 0.33), borderWidth: 0.5, textColor: BEI});
+      tf.setFontSize(9);
+      y = H - 132;
+    } else {
+      page.drawRectangle({x: 0, y: H - 34, width: W, height: 34, color: OSC});
+      page.drawText('El Otro Lado · Lista de pedido', {x: M, y: H - 22, size: 11, font: serif, color: BEI});
+      page.drawText(limpio(hoy.toLocaleDateString('es-ES')), {x: W - M - 60, y: H - 22, size: 9, font: helv, color: BEI});
+      y = H - 56;
+    }
+  }
+  function pie(){
+    doc.getPages().forEach((p, i, a) => p.drawText(`Página ${i + 1} de ${a.length}  ·  Los campos en amarillo se pueden rellenar`, {x: M, y: 20, size: 7.5, font: helv, color: GRIS}));
+  }
+  function campo(nombre, texto, x, yy, w, h, centrado){
+    const f = form.createTextField(nombre);
+    f.setText(limpio(texto));
+    f.addToPage(page, {x, y: yy, width: w, height: h, font: helv, backgroundColor: CAMPO, borderColor: LIN, borderWidth: 0.5});
+    f.setFontSize(9);
+    if (centrado) f.setAlignment(1);
+    return f;
+  }
+  const activos = productosActivos();
+  const lista = grupos(activos.filter(p => S.pdfTodos || aPedir(p) > 0 || S.extra[p.id]));
+  if (!lista.length) throw new Error('No hay nada que pedir. Marca «Incluir todos los proveedores» para sacar la hoja completa.');
+  nuevaPagina();
+  let k = 0;
+  for (const [prov, ps] of lista){
+    const P = provPorNombre(prov);
+    if (y - (38 + Math.min(ps.length, 3) * 17) < 50) nuevaPagina();
+    page.drawRectangle({x: M, y: y - 18, width: W - 2*M, height: 20, color: BEI});
+    page.drawText(corta(prov.toUpperCase(), bold, 10.5, 220), {x: M + 6, y: y - 12, size: 10.5, font: bold, color: OSC});
+    const contacto = corta([P.telefono && 'Tel. ' + P.telefono, P.whatsapp && P.whatsapp !== String(P.telefono).replace(/\D/g, '') && 'WhatsApp ' + P.whatsapp, P.email, P.diaPedido && 'Pedir: ' + P.diaPedido].filter(Boolean).join('  ·  '), helv, 8, W - 2*M - 240);
+    if (contacto) page.drawText(contacto, {x: W - M - 6 - helv.widthOfTextAtSize(contacto, 8), y: y - 12, size: 8, font: helv, color: OSC});
+    y -= 32;
+    [['Producto', COL.prod], ['Unidad', COL.ud], ['Quedan', COL.stock], ['Pedir', COL.cant], ['€/ud', COL.precio], ['Notas', COL.nota]]
+      .forEach(([t, x]) => page.drawText(t, {x: x + 2, y, size: 7.5, font: bold, color: GRIS}));
+    y -= 6;
+    let total = 0;
+    for (const p of ps){
+      if (y - 17 < 46) nuevaPagina();
+      y -= 17;
+      const n = aPedir(p);
+      page.drawText(corta(p.nombre, helv, 9.5, COL.ud - COL.prod - 8), {x: COL.prod + 2, y: y + 4, size: 9.5, font: helv, color: OSC});
+      page.drawText(corta(p.unidad || '', helv, 8.5, COL.stock - COL.ud - 6), {x: COL.ud + 2, y: y + 4, size: 8.5, font: helv, color: GRIS});
+      const a = actualDe(p);
+      page.drawText(a === '' ? '' : fmtN(a), {x: COL.stock + 2, y: y + 4, size: 9, font: helv, color: GRIS});
+      campo(`cant_${p.id}`, n ? fmtN(n) : '', COL.cant, y, 48, 14, true);
+      if (tienePrecio(p)){ page.drawText(limpio(p.precio.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2})), {x: COL.precio + 2, y: y + 4, size: 8.5, font: helv, color: GRIS}); total += n ? p.precio * n : 0; }
+      campo(`nota_${p.id}`, '', COL.nota, y, W - M - COL.nota, 14);
+      page.drawLine({start: {x: M, y: y - 2}, end: {x: W - M, y: y - 2}, thickness: 0.4, color: LIN});
+    }
+    for (let i = 1; i <= 2; i++){
+      if (y - 17 < 46) nuevaPagina();
+      y -= 17;
+      campo(`extra_${k}_${i}_producto`, '', COL.prod, y, COL.stock - COL.prod - 6, 14);
+      campo(`extra_${k}_${i}_cant`, '', COL.cant, y, 48, 14, true);
+      campo(`extra_${k}_${i}_nota`, '', COL.nota, y, W - M - COL.nota, 14);
+    }
+    if (total){ y -= 14; const t = limpio('Estimado: ' + eur(total)); page.drawText(t, {x: W - M - bold.widthOfTextAtSize(t, 9), y, size: 9, font: bold, color: OSC}); }
+    y -= 20; k++;
+  }
+  form.updateFieldAppearances(helv);
+  pie();
+  return await doc.save();
+}
+function b64(bytes){
+  let s = ''; const CH = 0x8000;
+  for (let i = 0; i < bytes.length; i += CH) s += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+  return btoa(s);
+}
+async function generarPdf(){
+  const res = document.getElementById('pdfRes');
+  if (typeof PDFLib === 'undefined'){ res.innerHTML = '<div class="aviso">No se pudo cargar el generador de PDF. Revisa la conexión y recarga.</div>'; return; }
+  res.innerHTML = '<div class="aviso">Generando PDF…</div>';
+  try {
+    await guardarCantidades(true);
+    const bytes = await construirPdf();
+    const d = new Date();
+    const nombre = `Pedido El Otro Lado ${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.pdf`;
+    const url = URL.createObjectURL(new Blob([bytes], {type: 'application/pdf'}));
+    let drive = null;
+    try { drive = await server('guardarPdf', b64(bytes), nombre); } catch(e){ drive = null; }
+    res.innerHTML = `<div class="aviso">PDF listo. ${drive && drive.url ? `<a href="${drive.url}" target="_blank" rel="noopener">Abrir en Drive</a> · ` : ''}En la app real se descarga y se guarda en vuestra carpeta de Drive.</div>`;
+    S._ultimoPdf = bytes;
+  } catch(e){ res.innerHTML = `<div class="aviso">${esc(e.message)}</div>`; }
+}
+
+/* Flecha de volver arriba: aparece al bajar en las listas largas */
+function mirarArriba(){
+  const b = document.getElementById('btnArriba');
+  b.hidden = !(S.pantalla !== 'entrar' && S.pantalla !== 'inicio' && window.scrollY > 500);
+}
+window.addEventListener('scroll', mirarArriba, { passive: true });
+document.getElementById('btnArriba').addEventListener('click', e => { e.stopPropagation(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+/* Botón atrás del móvil: hace lo mismo que la flecha de la app y nunca sale de ella */
+function atras(){
+  const modal = document.getElementById('modal');
+  if (modal.innerHTML){ cerrarHoja(); return; }
+  if (S.pantalla === 'recepcion' && S.recep){ S.recep = null; S.recepConfirmar = false; render(); return; }
+  if (S.pantalla !== 'entrar' && S.pantalla !== 'inicio'){ ir('inicio'); return; }
+  // en la pantalla de inicio o de entrada no hace nada
+}
+try {
+  history.replaceState({ eol: 'base' }, '');
+  history.pushState({ eol: 'app' }, '');
+  window.addEventListener('popstate', () => { history.pushState({ eol: 'app' }, ''); atras(); });
+} catch(e){}
+
+window.addEventListener('beforeunload', e => { if (Object.keys(S.borrador).length){ e.preventDefault(); e.returnValue = ''; } });
+arrancar();
+</script>
