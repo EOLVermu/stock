@@ -143,13 +143,15 @@ a.btn{text-decoration:none;display:inline-block}
 .prov-cab h2{font-family:var(--display);font-size:21px;margin:0}
 .prov-cab .info{color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:4px 12px}
 .prov-cab .info a{color:inherit}
-.lin{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:8px 14px;border-bottom:1px solid var(--line)}
+.lin{display:grid;grid-template-columns:1fr auto auto 34px;gap:10px;align-items:center;padding:8px 14px;border-bottom:1px solid var(--line)}
 .lin .n{min-width:0}
 .lin .n b{font-weight:600}
 .lin .n small{display:block;color:var(--muted);font-size:12px}
 .lin input{width:64px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 6px;text-align:center;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
 .lin .eur{width:64px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
 .lin.cero{opacity:.55}
+.lin .quitar{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center}
+.lin .quitar:active{background:var(--line)}
 .prov-pie{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 12px;align-items:center}
 .prov-pie .total{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:600}
 .anadir{padding:8px 14px;border-bottom:1px solid var(--line)}
@@ -705,6 +707,7 @@ function tarjetaProveedor(prov, ps){
         <div class="n"><b>${esc(p.nombre)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div>
         <input type="text" inputmode="decimal" value="${n ? fmtN(n) : ''}" placeholder="0" aria-label="Cantidad a pedir de ${esc(p.nombre)}" data-cant>
         <span class="eur">${tienePrecio(p) && n ? eur(p.precio * n) : (tienePrecio(p) ? eur(p.precio) : '')}</span>
+        ${n || S.extra[p.id] ? `<button type="button" class="quitar" data-quitar aria-label="Quitar ${esc(p.nombre)} del pedido">✕</button>` : '<span></span>'}
       </div>`; }).join('')}
     ${otros.length ? `<div class="anadir"><select data-anadir aria-label="Añadir producto de ${esc(prov)}"><option value="">+ Añadir otro producto de ${esc(prov)}</option>${otros.map(o => `<option value="${esc(o.id)}">${esc(o.nombre)}</option>`).join('')}</select></div>` : ''}
     ${bajoMinimo ? `<div class="aviso" style="margin:10px 14px 0">No llega al pedido mínimo de ${eur(P.pedidoMinimo)}.</div>` : ''}
@@ -1138,6 +1141,12 @@ document.addEventListener('click', async e => {
   if (t.dataset.ir){ const d = t.dataset.ir; salirCon(() => ir(d)); return; }
   if (t.dataset.salir){ await decidirSalida(t.dataset.salir === 'si'); return; }
   if (t.dataset.recep){ S.recep = { num: t.dataset.recep, ahora: {} }; S.recepConfirmar = false; window.scrollTo(0, 0); render(); return; }
+  if ('quitar' in t.dataset){
+    const id = t.closest('.lin').dataset.id;
+    S.cantidades[id] = '0'; delete S.extra[id]; render();
+    toast('Quitado del pedido. Pulsa «Guardar cantidades» para que quede así.');
+    return;
+  }
   if ('recepLista' in t.dataset){ salirCon(volverLista); return; }
   const rec = t.closest('.rec');
   if (rec && t.dataset.rpaso){ tocarRecep(rec.dataset.id, (num(S.recep.ahora[rec.dataset.id]) || 0) + Number(t.dataset.rpaso)); return; }
