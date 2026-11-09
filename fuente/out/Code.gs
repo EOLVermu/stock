@@ -53,7 +53,7 @@ function doGet() {
 const API_ = {
   entrar: (...a) => entrar(...a), obtenerDatos: (...a) => obtenerDatos(...a), guardarRecuento: (...a) => guardarRecuento(...a),
   guardarCantidades: (...a) => guardarCantidades(...a), marcarPedidoHecho: (...a) => marcarPedidoHecho(...a),
-  recepcionarPedido: (...a) => recepcionarPedido(...a), guardarCaja: (...a) => guardarCaja(...a),
+  recepcionarPedido: (...a) => recepcionarPedido(...a), guardarCaja: (...a) => guardarCaja(...a), guardarObservaciones: (...a) => guardarObservaciones(...a),
   actualizarPrecio: (...a) => actualizarPrecio(...a), guardarPdf: (...a) => guardarPdf(...a),
   guardarUsuario: (...a) => guardarUsuario(...a), guardarProveedor: (...a) => guardarProveedor(...a),
   guardarProducto: (...a) => guardarProducto(...a),
@@ -776,6 +776,26 @@ function leerTablaCruda_(nombre, columnaClave) {
  * Guarda la caja de un día. payload = { fecha: 'aaaa-mm-dd', efectivo, tarjeta, notas }
  * Si efectivo y tarjeta van vacíos, se borra ese día.
  */
+/** Observaciones generales del pedido (pantalla Pedido). Se guardan en Config, clave OBSERVACIONES_PEDIDO. */
+function guardarObservaciones(cred, texto) {
+  const u = auth_(cred, true);
+  return conBloqueo_(() => {
+    const t = String(texto == null ? '' : texto).slice(0, 2000);
+    const sh = hoja_(HOJA.CONFIG);
+    const cab = cabeceras_(sh);
+    const cK = col_(cab, 'Clave'), cV = col_(cab, 'Valor');
+    const last = sh.getLastRow();
+    let fila = 0;
+    if (last >= 2) {
+      const i = sh.getRange(2, cK + 1, last - 1, 1).getValues().findIndex(r => txt_(r[0]) === 'OBSERVACIONES_PEDIDO');
+      if (i >= 0) fila = i + 2;
+    }
+    if (!fila) { fila = last + 1; sh.getRange(fila, cK + 1).setValue('OBSERVACIONES_PEDIDO'); }
+    sh.getRange(fila, cV + 1).setNumberFormat('@').setValue(t);   // como texto: un «=» al principio no se toma por fórmula
+    return datos_(u);
+  });
+}
+
 function guardarCaja(cred, payload) {
   const u = auth_(cred, true);
   return conBloqueo_(() => {

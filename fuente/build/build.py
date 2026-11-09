@@ -75,6 +75,7 @@ window.DEMO_DATOS = %s;
       const completo = ped.lineas.every(l => l.recibido >= l.cantidad);
       if (!algo && !completo && !pl.cerrar) throw new Error('No has marcado nada como recibido.');
       ped.estado = completo ? 'Completo' : pl.cerrar ? 'Cerrado con faltas' : 'Parcial'; return datos(u); },
+    guardarObservaciones(c, t){ const u = auth(c, true); D.config.OBSERVACIONES_PEDIDO = String(t || ''); return datos(u); },
     guardarCaja(c, pl){ const u = auth(c, true); const i = D.caja.findIndex(x => x.fecha === pl.fecha);
       if (pl.efectivo === '' && pl.tarjeta === ''){ if (i >= 0) D.caja.splice(i, 1); return datos(u); }
       const ef = Number(pl.efectivo) || 0, ta = Number(pl.tarjeta) || 0;

@@ -155,6 +155,9 @@ a.btn{text-decoration:none;display:inline-block}
 .prov-pie{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 12px;align-items:center}
 .prov-pie .total{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:600}
 .anadir{padding:8px 14px;border-bottom:1px solid var(--line)}
+.obs-gen{display:block;margin:0 0 14px;font-weight:600}
+.obs-gen small{font-weight:400;color:var(--muted)}
+.obs-gen textarea{display:block;width:100%;margin-top:6px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:16px;font-weight:400;color:var(--ink);resize:vertical;min-height:64px}
 .anadir select{width:100%;background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:8px;font-size:15px;color:var(--muted)}
 .aviso{background:var(--surface-2);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--muted);margin:10px 0}
 .aviso a{color:var(--fg)}
@@ -307,6 +310,7 @@ window.DEMO_DATOS = {"pedidos": [{"num": "D1", "proveedor": "Bodegas Ruiz", "fec
       const completo = ped.lineas.every(l => l.recibido >= l.cantidad);
       if (!algo && !completo && !pl.cerrar) throw new Error('No has marcado nada como recibido.');
       ped.estado = completo ? 'Completo' : pl.cerrar ? 'Cerrado con faltas' : 'Parcial'; return datos(u); },
+    guardarObservaciones(c, t){ const u = auth(c, true); D.config.OBSERVACIONES_PEDIDO = String(t || ''); return datos(u); },
     guardarCaja(c, pl){ const u = auth(c, true); const i = D.caja.findIndex(x => x.fecha === pl.fecha);
       if (pl.efectivo === '' && pl.tarjeta === ''){ if (i >= 0) D.caja.splice(i, 1); return datos(u); }
       const ef = Number(pl.efectivo) || 0, ta = Number(pl.tarjeta) || 0;
@@ -667,6 +671,7 @@ function vistaPedido(){
       <div><b>${lineas.length}</b><span>Productos</span></div>
       <div><b>${total ? Math.round(total).toLocaleString('es-ES') + ' €' : '–'}</b><span>Estimado</span></div>
     </div>
+    <label class="obs-gen">Observaciones <small>· lo ve todo el equipo y sale en el PDF</small><textarea id="obsPedido" rows="2" placeholder="Algo especial que pedir esta semana…">${esc(obsPedido())}</textarea></label>
     <div class="pdfbar">
       <button class="btn peq" type="button" id="btnPdf">Generar PDF editable</button>
       <label class="chip"><input type="checkbox" id="pdfTodos" ${S.pdfTodos ? 'checked' : ''}> Incluir todos los proveedores</label>
@@ -679,6 +684,16 @@ function vistaPedido(){
   const pend = Object.keys(S.cantidades).length;
   barraAccion(pend ? `<button class="btn" type="button" id="btnGuardarCant" ${S.guardando ? 'disabled' : ''}>${S.guardando ? 'Guardando…' : `Guardar cantidades (${pend})`}</button>` : '');
   enlazarFiltros();
+}
+/* Observaciones generales del pedido: compartidas (Config · OBSERVACIONES_PEDIDO); se guardan al salir del campo */
+const obsGuardada = () => String((S.datos.config || {}).OBSERVACIONES_PEDIDO || '');
+const obsPedido = () => S.obsBorrador !== undefined ? S.obsBorrador : obsGuardada();
+async function guardarObs(){
+  if (S.obsBorrador === undefined) return true;
+  if (S.obsBorrador.trim() === obsGuardada().trim()){ S.obsBorrador = undefined; return true; }
+  setSync('Guardando…');
+  try { S.datos = await server('guardarObservaciones', S.obsBorrador); S.obsBorrador = undefined; toast('Observaciones guardadas'); setSync(''); return true; }
+  catch(e){ toast('No se guardaron las observaciones: ' + e.message); setSync(''); return false; }
 }
 function tarjetaProveedor(prov, ps){
   const P = provPorNombre(prov);
@@ -797,10 +812,11 @@ function cambiosPendientes(){
     n: Object.keys(S.borrador).length, que: 'el recuento',
     guardar: async () => { await guardarRecuento(); return !Object.keys(S.borrador).length; },
     descartar: () => { S.borrador = {}; guardarBorrador(); } };
-  if (P === 'pedido' && Object.keys(S.cantidades).length) return {
-    n: Object.keys(S.cantidades).length, que: 'las cantidades del pedido',
-    guardar: () => guardarCantidades(false),
-    descartar: () => { S.cantidades = {}; } };
+  const obsSucia = P === 'pedido' && S.obsBorrador !== undefined && S.obsBorrador.trim() !== obsGuardada().trim();
+  if (P === 'pedido' && (Object.keys(S.cantidades).length || obsSucia)) return {
+    n: Object.keys(S.cantidades).length, que: Object.keys(S.cantidades).length ? 'las cantidades del pedido' : 'las observaciones',
+    guardar: async () => (await guardarObs()) && (Object.keys(S.cantidades).length ? guardarCantidades(false) : true),
+    descartar: () => { S.cantidades = {}; S.obsBorrador = undefined; } };
   if (P === 'recepcion' && S.recep && Object.values(S.recep.ahora).some(v => num(v) > 0)) return {
     n: Object.values(S.recep.ahora).filter(v => num(v) > 0).length, que: 'la recepción',
     guardar: async () => { await enviarRecepcion(false); return !S.recep; },
@@ -1208,6 +1224,7 @@ document.addEventListener('click', async e => {
 });
 document.addEventListener('input', e => {
   const el = e.target;
+  if (el.id === 'obsPedido'){ S.obsBorrador = el.value; return; }
   const fila = el.closest('.prod');
   if (fila && el.dataset.campo){
     tocarBorrador(fila.dataset.id, el.dataset.campo, el.value.replace(/[^0-9.,]/g, ''));
@@ -1216,6 +1233,7 @@ document.addEventListener('input', e => {
   }
 });
 document.addEventListener('change', async e => {
+  if (e.target.id === 'obsPedido'){ if (await guardarObs()) render(); return; }
   const el = e.target;
   const fila = el.closest('.prod');
   if (fila && el.dataset.campo){ refrescarFila(fila.dataset.id); return; }
@@ -1337,6 +1355,17 @@ async function construirPdf(){
   const lista = grupos(activos.filter(p => S.pdfTodos || aPedir(p) > 0 || S.extra[p.id]));
   if (!lista.length) throw new Error('No hay nada que pedir. Marca «Incluir todos los proveedores» para sacar la hoja completa.');
   nuevaPagina();
+  const ob = limpio(obsPedido().trim());
+  if (ob){
+    const filas = []; let f = '';
+    for (const w of ob.split(/\s+/)){ if (f && helv.widthOfTextAtSize(f + ' ' + w, 9.5) > W - 2*M - 16){ filas.push(f); f = ''; } f += (f ? ' ' : '') + w; }
+    if (f) filas.push(f);
+    const alto = 18 + filas.length * 13;
+    page.drawRectangle({x: M, y: y - alto, width: W - 2*M, height: alto, borderColor: LIN, borderWidth: 0.8});
+    page.drawText('OBSERVACIONES', {x: M + 8, y: y - 13, size: 8, font: bold, color: GRIS});
+    filas.forEach((fl, i) => page.drawText(fl, {x: M + 8, y: y - 26 - i * 13, size: 9.5, font: helv, color: OSC}));
+    y -= alto + 16;
+  }
   let k = 0;
   for (const [prov, ps] of lista){
     const P = provPorNombre(prov);
