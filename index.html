@@ -364,7 +364,9 @@ const fmtN = n => n === '' ? '' : (Math.round(n*100)/100).toLocaleString('es-ES'
 const sinAcentos = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 function hace(iso){
   if (!iso) return '';
-  const d = new Date(iso), dias = Math.floor((Date.now() - d) / 864e5);
+  // días de calendario (no bloques de 24 h): lo de ayer a las 13:51 es «ayer» aunque hoy aún no sean las 13:51
+  const d = new Date(iso), dia = x => new Date(x.getFullYear(), x.getMonth(), x.getDate());
+  const dias = Math.round((dia(new Date()) - dia(d)) / 864e5);
   if (dias <= 0) return 'hoy ' + d.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
   if (dias === 1) return 'ayer';
   if (dias < 7) return 'hace ' + dias + ' días';
