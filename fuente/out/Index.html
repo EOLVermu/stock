@@ -188,6 +188,11 @@ a.btn{text-decoration:none;display:inline-block}
 
 /* Recepción */
 .ped{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+.ped-caja{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin:10px 0;overflow:hidden}
+.ped-caja .ped{border:0;border-radius:0;margin:0;background:transparent}
+.ped-caja .ped-pie{display:flex;justify-content:flex-end;padding:0 14px 12px}
+.btn-todo{font-weight:700;letter-spacing:.02em}
+.rec-todo{display:flex;justify-content:flex-end;margin:4px 0 10px}
 .ped .t{flex:1;min-width:0}
 .ped .t b{display:block;font-family:var(--display);font-size:19px}
 .ped .t small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
@@ -909,9 +914,10 @@ function vistaRecepcion(){
       ${peds.length ? peds.map(x => {
         const falta = x.lineas.reduce((s, l) => s + pendLinea(l), 0);
         const prods = x.lineas.filter(l => pendLinea(l) > 0).length;
-        return `<button type="button" class="ped" data-recep="${esc(x.num)}">
+        return `<div class="ped-caja"><button type="button" class="ped" data-recep="${esc(x.num)}">
           <span class="t"><b>${esc(x.proveedor)}</b><small>Pedido el ${fecha(x.fecha)}${x.hechoPor ? ' por ' + esc(x.hechoPor) : ''} · ${prods} ${prods === 1 ? 'producto' : 'productos'} por recibir (${fmtN(falta)} uds)</small></span>
-          <span class="pill ${x.estado === 'Parcial' ? 'parcial' : 'pend'}">${x.estado === 'Parcial' ? 'Parcial' : 'Pendiente'}</span><span class="chev">›</span></button>`; }).join('')
+          <span class="pill ${x.estado === 'Parcial' ? 'parcial' : 'pend'}">${x.estado === 'Parcial' ? 'Parcial' : 'Pendiente'}</span><span class="chev">›</span></button>
+          <div class="ped-pie"><button type="button" class="btn peq btn-todo" data-recibirtodo="${esc(x.num)}">Recepcionar TODO</button></div></div>`; }).join('')
       : `<div class="vacio"><b>No hay pedidos por recibir</b>Los pedidos aparecen aquí cuando en Pedido se marcan como «pedido».</div>`}`;
     barraAccion('');
     return;
@@ -924,6 +930,7 @@ function vistaRecepcion(){
     <button type="button" class="volver-lista" data-recep-lista>‹ Todos los pedidos</button>
     <h1>${esc(p.proveedor)}</h1>
     <p class="sub">Pedido del ${fecha(p.fecha)}${p.hechoPor ? ' (' + esc(p.hechoPor) + ')' : ''}${p.estado === 'Parcial' ? ' · ya recibido en parte' : ''}. Pulsa + por cada unidad que llega o «Todo» si ha llegado completo.</p>
+    <div class="rec-todo"><button type="button" class="btn peq btn-todo" data-recibirtodo="${esc(p.num)}">Recepcionar TODO</button></div>
     ${lineas.map(l => {
       const pend = pendLinea(l);
       const falta = Math.max(pend - l.ya, 0);
@@ -954,6 +961,23 @@ function tocarRecep(id, v){
   const n = Math.max(0, num(v) || 0);
   if (n) S.recep.ahora[id] = n; else delete S.recep.ahora[id];
   render();
+}
+/* Recepcionar TODO: todo lo pendiente del pedido llega completo (con confirmación) */
+function preguntarRecibirTodo(numPed){
+  const p = (S.datos.pedidos || []).find(x => x.num === numPed);
+  if (!p) return;
+  const ls = p.lineas.filter(l => pendLinea(l) > 0);
+  const uds = ls.reduce((s, l) => s + pendLinea(l), 0);
+  abrirHoja(`<h3>¿Recepcionar todo el pedido de ${esc(p.proveedor)}?</h3>
+    <p>Se dará por recibido completo: ${ls.length} ${ls.length === 1 ? 'producto' : 'productos'} (${fmtN(uds)} uds) que se sumarán al almacén.</p>
+    <div class="botones"><button class="btn sec peq" type="button" data-cerrar>Cancelar</button><button class="btn peq" type="button" data-recibirtodosi="${esc(p.num)}">Recepcionar TODO</button></div>`);
+}
+async function recibirTodo(numPed){
+  const p = (S.datos.pedidos || []).find(x => x.num === numPed);
+  if (!p || S.guardando) return;
+  S.recep = { num: p.num, ahora: {} };
+  p.lineas.forEach(l => { const n = pendLinea(l); if (n > 0) S.recep.ahora[l.id] = n; });
+  await enviarRecepcion(false);
 }
 async function enviarRecepcion(cerrar){
   const p = (S.datos.pedidos || []).find(x => x.num === S.recep.num);
@@ -1094,6 +1118,8 @@ document.addEventListener('click', async e => {
     return;
   }
   if ('recepLista' in t.dataset){ salirCon(volverLista); return; }
+  if (t.dataset.recibirtodo){ preguntarRecibirTodo(t.dataset.recibirtodo); return; }
+  if (t.dataset.recibirtodosi){ const n = t.dataset.recibirtodosi; cerrarHoja(); await recibirTodo(n); return; }
   const rec = t.closest('.rec');
   if (rec && t.dataset.rpaso){ tocarRecep(rec.dataset.id, (num(S.recep.ahora[rec.dataset.id]) || 0) + Number(t.dataset.rpaso)); return; }
   if (rec && 'rtodo' in t.dataset){
