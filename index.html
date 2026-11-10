@@ -408,9 +408,21 @@ function sugerido(p){
   return a <= p.minimo ? Math.max(p.ideal - a, 0) : 0;
 }
 function manualDe(p){ const b = S.borrador[p.id]; return (b && 'aPedir' in b) ? num(b.aPedir) : p.aPedir; }
+/* Productos con algo pendiente de recibir en un pedido abierto (ya están pedidos: no se vuelven a sugerir) */
+function pendientes(){
+  const d = S.datos;
+  if (!d) return new Set();
+  if (d._pend) return d._pend;
+  const set = new Set();
+  (d.pedidos || []).forEach(o => (o.lineas || []).forEach(l => { if ((num(l.cantidad) || 0) > (num(l.recibido) || 0)) set.add(String(l.id)); }));
+  Object.defineProperty(d, '_pend', { value: set });
+  return set;
+}
+const enCamino = p => pendientes().has(String(p.id));
 function aPedir(p){
   if (p.id in S.cantidades) return num(S.cantidades[p.id]) || 0;
   const m = manualDe(p); if (m !== '') return m;
+  if (yaPedido(p) || enCamino(p)) return 0;      // ya pedido y aún sin recibir: no sugerir otra vez
   return sugerido(p) || 0;
 }
 const yaPedido = p => p.ultimoPedido && (!p.ultimaCuenta || new Date(p.ultimoPedido) >= new Date(p.ultimaCuenta)) && !S.borrador[p.id];
@@ -640,7 +652,7 @@ function tarjetaProveedor(prov, ps){
     <div class="prov-cab"><h2>${esc(prov)}</h2>${info.length ? `<div class="info">${info.map(i => `<span>${i}</span>`).join('')}</div>` : ''}</div>
     ${ps.map(p => {
       const n = aPedir(p);
-      const sub = [p.unidad, actualDe(p) !== '' ? 'quedan ' + fmtN(actualDe(p)) : '', yaPedido(p) ? 'pedido el ' + fecha(p.ultimoPedido) : ''].filter(Boolean).join(' · ');
+      const sub = [p.unidad, actualDe(p) !== '' ? 'quedan ' + fmtN(actualDe(p)) : '', yaPedido(p) || enCamino(p) ? 'pedido' + (p.ultimoPedido ? ' el ' + fecha(p.ultimoPedido) : '') + (enCamino(p) ? ', sin recibir' : '') : ''].filter(Boolean).join(' · ');
       return `<div class="lin ${n ? '' : 'cero'}" data-id="${esc(p.id)}">
         <div class="n"><b>${esc(p.nombre)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div>
         <input type="text" inputmode="decimal" value="${n ? fmtN(n) : ''}" placeholder="0" aria-label="Cantidad a pedir de ${esc(p.nombre)}" data-cant>
@@ -1206,11 +1218,17 @@ async function guardarCantidades(silencioso){
   finally { S.guardando = false; setSync(''); if (!silencioso && S.datos) render(); }
 }
 async function marcarHecho(prov){
+  if (S.marcando) return;                        // evita apuntar el mismo pedido dos veces con toques seguidos
+  S.marcando = true;
+  try { await marcarHecho_(prov); } finally { S.marcando = false; }
+}
+async function marcarHecho_(prov){
   if (!(await guardarCantidades(true))) return;
   const P = provPorNombre(prov);
   const items = productosActivos().filter(p => p.proveedor === prov && aPedir(p) > 0).map(p => ({id: p.id, cantidad: aPedir(p)}));
   setSync('Guardando…');
   try {
+    if (!items.length){ toast('No hay nada que pedir a ' + prov); S.confirmar = ''; setSync(''); render(); return; }
     S.datos = await server('marcarPedidoHecho', {proveedor: prov, via: P.canal || '', items});
     toast(`Pedido a ${prov} apuntado`);
   } catch(e){ toast('No se pudo guardar: ' + e.message); }
