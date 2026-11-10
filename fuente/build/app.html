@@ -415,7 +415,16 @@ const yaPedido = p => p.ultimoPedido && (!p.ultimaCuenta || new Date(p.ultimoPed
 const tienePrecio = p => p.precio !== '' && p.precio !== undefined && p.precio !== null;
 
 /* ===================== Render principal ===================== */
+/* Si se redibuja mientras un dedo/ratón está pulsando (p. ej. al salir de un campo tocando un botón),
+   el botón se sustituye y el toque se pierde. Mientras se pulsa, el redibujado espera a que acabe el toque. */
+let pulsando = false, renderPendiente = false;
+function soltarPulsacion(){ if (!pulsando) return; pulsando = false; if (renderPendiente){ renderPendiente = false; render(); } }
+document.addEventListener('pointerdown', () => { pulsando = true; }, true);
+document.addEventListener('click', () => setTimeout(soltarPulsacion, 0), true);
+document.addEventListener('pointerup', () => setTimeout(soltarPulsacion, 400), true);
+document.addEventListener('pointercancel', () => setTimeout(soltarPulsacion, 0), true);
 function render(){
+  if (pulsando){ renderPendiente = true; return; }
   const app = document.getElementById('app');
   ordenarDatos(S.datos);
   setTimeout(mirarArriba, 0);
