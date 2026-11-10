@@ -754,7 +754,7 @@ function tarjetaProveedor(prov, ps){
         ${wa ? `<a class="btn peq" href="${wa}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
         ${mail ? `<a class="btn peq sec" href="${mail}" target="_blank" rel="noopener">Email</a>` : ''}
         <button type="button" class="btn peq sec" data-copiar>Copiar pedido</button>
-        ${conf ? `<button type="button" class="btn peq" data-hecho="si">Sí, ya está pedido</button><button type="button" class="btn peq sec" data-hecho="no">No</button>`
+        ${conf ? `<button type="button" class="btn peq" data-hecho="si">Confirmar pedido</button><button type="button" class="btn peq sec" data-hecho="no">No</button>`
                : `<button type="button" class="btn peq sec" data-hecho="preguntar">Marcar como pedido</button>`}
       ` : `<span class="sub" style="margin:0">Nada que pedir</span>`}
       ${total ? `<span class="total">${eur(total)}</span>` : ''}
